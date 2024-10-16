@@ -1,10 +1,10 @@
 import React from 'react'
-import LandingPage from './LandingPage'
+import Home from './pages/Home'
 import './index.css'
 
 function App() {
   return (
-    <LandingPage />
+    <Home />
   )
 }
 

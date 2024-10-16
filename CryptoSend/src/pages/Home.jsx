@@ -1,11 +1,11 @@
 import React from "react"
 import { Bell, Search, CreditCard, PieChart, Building2, HelpCircle, Twitter } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "./components/ui/Avatar"
-import { Button } from "./components/ui/Button"
-import { Card, CardContent } from "./components/ui/Card"
-import { Input } from "./components/ui/Input"
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/Avatar"
+import { Button } from "../components/ui/Button"
+import { Card, CardContent } from "../components/ui/Card"
+import { Input } from "../components/ui/Input"
 
-export default function ModernLaunchPage() {
+export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 p-4 max-w-md mx-auto">
       {/* Header */}
