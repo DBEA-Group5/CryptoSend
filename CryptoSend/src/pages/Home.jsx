@@ -15,6 +15,7 @@ import { Card, CardContent } from '../components/ui/Card';
 // import { Input } from '../components/ui/Input';
 import { Modal, Select, Input, Drawer, Flex, Spin, Switch } from 'antd'; // Import Ant Design Modal
 import Convert from './convert-money/convert';
+import Charts from './crypto-charts/charts';
 
 export default function Home() {
   const [isConvertVisible, setIsConvertVisible] = useState(false);
@@ -133,6 +134,8 @@ export default function Home() {
         isDrawerVisible={isConvertVisible}
         onClose={handleCloseConvertDrawer}
       />
+
+      <Charts></Charts>
 
       <section className="mb-8">
         <h3 className="text-xl text-white font-bold mb-4">Getting started</h3>
