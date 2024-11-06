@@ -1,11 +1,44 @@
-import React from 'react'
-import Home from './pages/Home'
-import './index.css'
+// src/App.jsx
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Import React Router components
+import Login from './pages/login';
+import Home from './pages/Home';
+import './index.css';
 
-function App() {
+const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Example login success handler (it could be based on actual authentication)
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+  };
+
   return (
-    <Home />
-  )
-}
+    <Router>
+      <Routes>
+        {/* Define routes for Login and Home */}
+        <Route
+          path="/login"
+          element={<Login onLoginSuccess={handleLoginSuccess} />}
+        />
+        <Route
+          path="/home"
+          element={
+            isLoggedIn ? (
+              <Home />
+            ) : (
+              <Login onLoginSuccess={handleLoginSuccess} />
+            )
+          }
+        />
+        {/* Default route can go to the login page */}
+        <Route
+          path="/"
+          element={<Login onLoginSuccess={handleLoginSuccess} />}
+        />
+      </Routes>
+    </Router>
+  );
+};
 
-export default App
+export default App;

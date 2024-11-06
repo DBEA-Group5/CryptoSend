@@ -16,9 +16,16 @@ import { Card, CardContent } from '../components/ui/Card';
 import { Modal, Select, Input, Drawer, Flex, Spin, Switch } from 'antd'; // Import Ant Design Modal
 import Convert from './convert-money/convert';
 import Charts from './crypto-charts/charts';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
   const [isConvertVisible, setIsConvertVisible] = useState(false);
+  const navigate = useNavigate(); // Hook for programmatic navigation
+
+  const handleLogout = () => {
+    // Handle the logout logic here (e.g., clearing tokens, resetting states)
+    navigate('/login'); // Redirect to login page after logging out
+  };
 
   const showConvertDrawer = () => {
     setIsConvertVisible(true);
@@ -37,6 +44,7 @@ export default function Home() {
             <AvatarImage src="/placeholder-avatar.jpg" />
             <AvatarFallback>JD</AvatarFallback>
           </Avatar>
+
           <div>
             <h2 className="font-semibold text-white">Welcome back</h2>
             <p className="text-sm text-gray-500">John Doe</p>
@@ -50,13 +58,12 @@ export default function Home() {
           >
             <Bell className="w-5 h-5" />
           </Button>
-          <Button
-            size="icon"
-            variant="ghost"
-            className="text-gray-500 hover:text-purple-500"
+          <button
+            onClick={handleLogout}
+            className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-200"
           >
-            <Search className="w-5 h-5" />
-          </Button>
+            Logout
+          </button>
         </div>
       </header>
 
