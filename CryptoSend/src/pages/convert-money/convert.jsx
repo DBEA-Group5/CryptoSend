@@ -31,7 +31,7 @@ export default function Convert({ isDrawerVisible, onClose }) {
     onClose();
   };
 
-   const fetchCurrencyConversion = async (currency, setCurrencyValue) => {
+  const fetchCurrencyConversion = async (currency, setCurrencyValue) => {
     try {
       const response = await axios.get(
         `https://personal-mkie0uyz.outsystemscloud.com/Currency_Convert/rest/ExposeAPI/GetCurrency/`,
@@ -90,7 +90,6 @@ export default function Convert({ isDrawerVisible, onClose }) {
     }, 4000);
   };
 
-
   return (
     <Drawer
       title="Send Money (F-C-F)"
@@ -102,43 +101,52 @@ export default function Convert({ isDrawerVisible, onClose }) {
       style={{ background: '#f5f5f5' }}
     >
       <div>
-        <h3 className="mb-8 text-purple-700 font-bold	">
-          $1 {inputCurrency} = {convertedCurrency} USDC
-        </h3>
-        <h4 className="mb-8 text-purple-700 font-bold">
-          $1 {outputCurrency} = {convertedCurrency2} USDC
-        </h4>
+        <Card className="bg-black p-4 mb-8">
+          <h2 className="text-white font-bold text-2xl mb-2">Rates</h2>
+          <h3 className=" text-purple-400 font-bold	">
+            $1 {inputCurrency} = {convertedCurrency} USDC
+          </h3>
+          <h4 className=" text-purple-400 font-bold">
+            $1 {outputCurrency} = {convertedCurrency2} USDC
+          </h4>
+        </Card>
+        <h4 className="font-medium text-gray-400 mb-2">Transfer From</h4>
         <Card
           title="Card title"
           style={{
-            display: 'flex',
+            // display: 'flex',
             marginBottom: '16px',
             padding: '16px',
             background: 'white',
             border: 'none',
           }}
         >
-          <Select
-            value={inputCurrency}
-            onChange={(value) => setInputCurrency(value)}
-            style={{ marginRight: '8px', height: '70px' }}
-          >
-            {countryOptions.map((country) => (
-              <Option key={country.label} value={country.label}>
-                <Flag
-                  code={country.code}
-                  style={{ width: '20px', marginRight: '8px' }}
-                />
-                {country.label}
-              </Option>
-            ))}
-          </Select>
-          <Input
-            placeholder="Amount to convert"
-            value={inputValue}
-            onChange={handleInputChange}
-            style={{ padding: '16px' }}
-          />
+          <div className="flex mb-2">
+            <Select
+              value={inputCurrency}
+              onChange={(value) => setInputCurrency(value)}
+              style={{ marginRight: '8px', height: '70px' }}
+            >
+              {countryOptions.map((country) => (
+                <Option key={country.label} value={country.label}>
+                  <Flag
+                    code={country.code}
+                    style={{ width: '20px', marginRight: '8px' }}
+                  />
+                  {country.label}
+                </Option>
+              ))}
+            </Select>
+            <Input
+              placeholder="Amount to convert"
+              value={inputValue}
+              onChange={handleInputChange}
+              style={{ padding: '16px' }}
+            />
+          </div>
+          <p className="font-bold text-blue-400">
+            Current Balance: {inputCurrency}
+          </p>
         </Card>{' '}
         <Flex
           gap="middle"
@@ -166,6 +174,7 @@ export default function Convert({ isDrawerVisible, onClose }) {
               style={{
                 display: 'flex',
                 padding: '16px',
+                marginBottom: '16px',
                 background: 'white',
                 border: 'none',
               }}
@@ -180,12 +189,14 @@ export default function Convert({ isDrawerVisible, onClose }) {
             </p> */}
         </Flex>
         {/* Output field with currency select */}
+        <h4 className="font-medium text-gray-400 mb-2">Transfer To</h4>
+        <Select className="w-full mb-2" placeholder="Select Sendee"></Select>
         <Card
           title="Card title"
           style={{
             display: 'flex',
             marginBottom: '16px',
-            marginTop: '16px',
+            // marginTop: '16px',
             padding: '16px',
             background: 'white',
             border: 'none',
