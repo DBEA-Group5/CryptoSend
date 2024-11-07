@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Bell,
   Search,
@@ -12,7 +12,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/Avatar';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
-import { Modal, Select, Input, Drawer, Flex, Spin, Switch } from 'antd';
+import { Input } from '../components/ui/Input';
 import Convert from './convert-money/convert';
 import Charts from './crypto-charts/charts';
 
@@ -69,7 +69,9 @@ export default function Home() {
           <p className="text-3xl font-bold mb-4">$12,345.67</p>
           <div className="flex justify-between text-sm">
             <span>+2.5% from last month</span>
-            <span>View Details</span>
+            <Link to="/balance-details" className="text-white hover:underline">
+              View Details
+            </Link>
           </div>
         </CardContent>
       </Card>
