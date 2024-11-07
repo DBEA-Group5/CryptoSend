@@ -79,26 +79,26 @@ export default function Home() {
       <section className="mb-8">
         <h3 className="text-xl text-white font-bold mb-4">My apps</h3>
         <div className="grid grid-cols-3 gap-4">
-          <Card className="bg-white hover:shadow-md transition-shadow">
+          <Card className="bg-purple-500 hover:shadow-md transition-shadow">
             <CardContent className="p-4 flex flex-col items-center justify-center">
-              <CreditCard className="w-8 h-8 text-purple-500 mb-2" />
-              <span className="text-sm font-medium">Fin bank</span>
+              <CreditCard className="w-8 h-8 text-white mb-2" />
+              <span className="text-sm font-medium text-white">Fin bank</span>
             </CardContent>
           </Card>
-          <Card className="bg-white hover:shadow-md transition-shadow">
+          <Card className="bg-purple-500 hover:shadow-md transition-shadow">
             <CardContent className="p-4 flex flex-col items-center justify-center">
-              <PieChart className="w-8 h-8 text-purple-500 mb-2" />
-              <span className="text-sm font-medium">Analytics</span>
+              <PieChart className="w-8 h-8 text-white mb-2" />
+              <span className="text-sm font-medium text-white">Analytics</span>
             </CardContent>
           </Card>
-          <Card className="bg-white hover:shadow-md transition-shadow">
+          <Card className="bg-purple-500 hover:shadow-md transition-shadow">
             <CardContent className="p-4 flex flex-col items-center justify-center">
-              <Building2 className="w-8 h-8 text-purple-500 mb-2" />
-              <span className="text-sm font-medium">Retail</span>
+              <Building2 className="w-8 h-8 text-white mb-2" />
+              <span className="text-sm font-medium text-white">Retail</span>
             </CardContent>
           </Card>
         </div>
-      </section>
+    </section>
 
       {/* Quick Actions */}
       <section className="mb-8">
