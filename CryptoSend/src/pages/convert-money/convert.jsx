@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/Avatar';
 import { Button } from '../../components/ui/Button';
