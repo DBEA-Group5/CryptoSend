@@ -1,24 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Import axios
-
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/Avatar';
 import { Button } from '../../components/ui/Button';
-import { Card } from '../../components/ui/Card';
-import { Select, Input, Drawer, Flex, Spin } from 'antd'; // Import Ant Design Modal
-
-import Flag from 'react-world-flags'; // Import the Flag component
-
-const { Option } = Select;
+import { Card, CardContent } from '../../components/ui/Card';
+import { Input } from '../../components/ui/Input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/Select';
 
 const countryOptions = [
-  { code: 'SG', label: 'SGD' },
-  { code: 'US', label: 'USD' },
-  { code: 'EU', label: 'EUR' },
-  { code: 'GB', label: 'GBP' },
-  { code: 'JP', label: 'JPY' },
-  // Add more countries as needed
+  { code: 'SG', label: 'SGD', flag: '🇸🇬' },
+  { code: 'US', label: 'USD', flag: '🇺🇸' },
+  { code: 'EU', label: 'EUR', flag: '🇪🇺' },
+  { code: 'GB', label: 'GBP', flag: '🇬🇧' },
+  { code: 'JP', label: 'JPY', flag: '🇯🇵' },
 ];
 
-export default function Convert({ isDrawerVisible, onClose }) {
+export default function Convert() {
+  const navigate = useNavigate();
   const [inputValue, setInputValue] = useState('');
   const [outputValue, setOutputValue] = useState('');
   const [inputCurrency, setInputCurrency] = useState('SGD');
@@ -26,10 +24,6 @@ export default function Convert({ isDrawerVisible, onClose }) {
   const [convertedCurrency, setConvertedCurrency] = useState(0);
   const [convertedCurrency2, setConvertedCurrency2] = useState(0);
   const [loading, setLoading] = useState(false);
-
-  const handleClose = () => {
-    onClose();
-  };
 
   const fetchCurrencyConversion = async (currency, setCurrencyValue) => {
     try {
@@ -64,9 +58,9 @@ export default function Convert({ isDrawerVisible, onClose }) {
 
   useEffect(() => {
     if (inputValue) {
-      setOutputValue(inputValue * convertedCurrency * convertedCurrency2);
+      setOutputValue((inputValue * convertedCurrency * convertedCurrency2).toFixed(2));
     }
-  }, [convertedCurrency, convertedCurrency2]);
+  }, [inputValue, convertedCurrency, convertedCurrency2]);
 
   const handleInputChange = (e) => {
     const input = e.target.value;
@@ -74,169 +68,136 @@ export default function Convert({ isDrawerVisible, onClose }) {
     setLoading(true);
 
     setTimeout(() => {
-      setOutputValue(input * convertedCurrency * convertedCurrency2);
+      setOutputValue((input * convertedCurrency * convertedCurrency2).toFixed(2));
       setLoading(false);
-    }, 4000);
-  };
-
-  const handleOutputChange = (e) => {
-    const output = e.target.value;
-    setOutputValue(output);
-    setLoading(true);
-
-    setTimeout(() => {
-      setInputValue((output * convertedCurrency2) / convertedCurrency);
-      setLoading(false);
-    }, 4000);
+    }, 1000);
   };
 
   return (
-    <Drawer
-      title="Send Money (F-C-F)"
-      placement="bottom"
-      closable={true}
-      onClose={handleClose}
-      open={isDrawerVisible}
-      height={800} // Adjust height as needed
-      style={{ background: '#f5f5f5' }}
-    >
-      <div>
-        <Card className="bg-black p-4 mb-8">
-          <h2 className="text-white font-bold text-2xl mb-2">Rates</h2>
-          <h3 className=" text-purple-400 font-bold	">
-            $1 {inputCurrency} = {convertedCurrency} USDC
-          </h3>
-          <h4 className=" text-purple-400 font-bold">
-            $1 {outputCurrency} = {convertedCurrency2} USDC
-          </h4>
-        </Card>
-        <h4 className="font-medium text-gray-400 mb-2">Transfer From</h4>
-        <Card
-          title="Card title"
-          style={{
-            // display: 'flex',
-            marginBottom: '16px',
-            padding: '16px',
-            background: 'white',
-            border: 'none',
-          }}
+    <div className="flex flex-col min-h-screen bg-[#0d1117]">
+      <header className="flex items-center justify-between p-4 border-b border-gray-800">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate(-1)}
+          className="text-gray-400 hover:text-white hover:bg-gray-800"
         >
-          <div className="flex mb-2">
-            <Select
-              value={inputCurrency}
-              onChange={(value) => setInputCurrency(value)}
-              style={{ marginRight: '8px', height: '70px' }}
-            >
-              {countryOptions.map((country) => (
-                <Option key={country.label} value={country.label}>
-                  <Flag
-                    code={country.code}
-                    style={{ width: '20px', marginRight: '8px' }}
-                  />
-                  {country.label}
-                </Option>
-              ))}
-            </Select>
-            <Input
-              placeholder="Amount to convert"
-              value={inputValue}
-              onChange={handleInputChange}
-              style={{ padding: '16px' }}
-            />
-          </div>
-          <p className="font-bold text-blue-400">
-            Current Balance: {inputCurrency}
-          </p>
-        </Card>{' '}
-        <Flex
-          gap="middle"
-          vertical
-          style={{ display: loading ? 'flex' : 'none' }}
-        >
-          <Spin spinning={loading}>
-            <Card
-              title="Card title"
-              style={{
-                display: 'flex',
-                padding: '16px',
-                background: 'white',
-                border: 'none',
-              }}
-            >
-              <h3 className="text-purple-700 font-bold m-auto d-block">
-                Converting from {inputCurrency} to USDC
-              </h3>
-            </Card>
-          </Spin>{' '}
-          <Spin spinning={loading}>
-            <Card
-              title="Card title"
-              style={{
-                display: 'flex',
-                padding: '16px',
-                marginBottom: '16px',
-                background: 'white',
-                border: 'none',
-              }}
-            >
-              <h3 className="text-purple-700 font-bold m-auto d-block">
-                Converting from USDC to {outputCurrency}
-              </h3>
-            </Card>
-          </Spin>
-          {/* <p>
-              <Switch checked={loading} onChange={setLoading} />
-            </p> */}
-        </Flex>
-        {/* Output field with currency select */}
-        <h4 className="font-medium text-gray-400 mb-2">Transfer To</h4>
-        <Select className="w-full mb-2" placeholder="Select Sendee"></Select>
-        <Card
-          title="Card title"
-          style={{
-            display: 'flex',
-            marginBottom: '16px',
-            // marginTop: '16px',
-            padding: '16px',
-            background: 'white',
-            border: 'none',
-          }}
-        >
-          {' '}
-          <Select
-            value={outputCurrency}
-            onChange={(value) => setOutputCurrency(value)}
-            style={{ marginRight: '8px', height: '70px' }}
-          >
-            {countryOptions.map((country) => (
-              <Option key={country.label} value={country.label}>
-                <Flag
-                  code={country.code}
-                  style={{ width: '20px', marginRight: '8px' }}
-                />
-                {country.label}
-              </Option>
-            ))}
-          </Select>
-          <Input
-            placeholder="Converted amount"
-            value={outputValue}
-            style={{ padding: '16px' }}
-            onChange={handleOutputChange}
-          />
-        </Card>
-      </div>
+          <ArrowLeft className="w-6 h-6" />
+        </Button>
+        <h1 className="text-xl font-bold text-white">Send Money</h1>
+        <div className="w-6" />
+      </header>
 
-      <Button
-        type="primary"
-        className={
-          'bg-black text-purple-400 w-full m-auto button p-6 align-center d-flex font-bold text-md mt-8'
-        }
-        // loading={loadings[0]}
-        // onClick={() => enterLoading(0)}
-      >
-        Convert Money
-      </Button>
-    </Drawer>
+      <main className="flex-1 overflow-y-auto p-4 space-y-6">
+        <Card className="bg-[#1e2329] border-gray-800">
+          <CardContent className="p-4">
+            <h2 className="text-lg font-semibold text-white mb-2">Exchange Rate</h2>
+            <div className="space-y-1 text-gray-400">
+              <p>1 {inputCurrency} = {convertedCurrency.toFixed(4)} USDC</p>
+              <p>1 {outputCurrency} = {convertedCurrency2.toFixed(4)} USDC</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">From</label>
+            <Card className="bg-[#1e2329] border-gray-800">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-4 mb-4">
+                  <Select value={inputCurrency} onValueChange={setInputCurrency}>
+                    <SelectTrigger className="w-[120px] bg-[#282d34] border-gray-700 text-white">
+                      <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#282d34] border-gray-700">
+                      {countryOptions.map((option) => (
+                        <SelectItem 
+                          key={option.label} 
+                          value={option.label}
+                          className="text-white hover:bg-gray-700"
+                        >
+                          <span className="mr-2">{option.flag}</span>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    type="number"
+                    placeholder="0.00"
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    className="flex-1 bg-[#282d34] border-gray-700 text-white placeholder-gray-500 focus:border-purple-500"
+                  />
+                </div>
+                <p className="text-sm text-gray-400">
+                  Available balance: 1,000.00 {inputCurrency}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="flex justify-center">
+            <ArrowRight className="w-6 h-6 text-[#8A2BE2]" />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">To</label>
+            <Card className="bg-[#1e2329] border-gray-800">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-4 mb-4">
+                  <Select value={outputCurrency} onValueChange={setOutputCurrency}>
+                    <SelectTrigger className="w-[120px] bg-[#282d34] border-gray-700 text-white">
+                      <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#282d34] border-gray-700">
+                      {countryOptions.map((option) => (
+                        <SelectItem 
+                          key={option.label} 
+                          value={option.label}
+                          className="text-white hover:bg-gray-700"
+                        >
+                          <span className="mr-2">{option.flag}</span>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    type="number"
+                    placeholder="0.00"
+                    value={outputValue}
+                    readOnly
+                    className="flex-1 bg-[#282d34] border-gray-700 text-white placeholder-gray-500"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Avatar className="w-8 h-8 border border-gray-700">
+                    <AvatarImage src="/placeholder-user.jpg" alt="Recipient" />
+                    <AvatarFallback className="bg-[#282d34] text-white">RC</AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm text-white">Recipient Name</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </main>
+
+      <footer className="p-4 border-t border-gray-800">
+        <Button 
+          className="w-full h-14 bg-[#8A2BE2] hover:bg-[#7B27CC] text-white font-medium text-lg" 
+          disabled={loading}
+        >
+          {loading ? (
+            <span className="flex items-center justify-center">
+              <span className="animate-pulse mr-2">•••</span>
+              Converting...
+            </span>
+          ) : (
+            'Send Money'
+          )}
+        </Button>
+      </footer>
+    </div>
   );
 }
