@@ -192,7 +192,7 @@ export default function Convert() {
           {loading ? (
             <span className="flex items-center justify-center">
               <span className="animate-pulse mr-2">•••</span>
-              Converting...
+              
             </span>
           ) : (
             'Send Money'
