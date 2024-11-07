@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Import axios
+import axios from 'axios';
 import {
   Bell,
   Search,
@@ -12,8 +12,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/Avatar';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
-// import { Input } from '../components/ui/Input';
-import { Modal, Select, Input, Drawer, Flex, Spin, Switch } from 'antd'; // Import Ant Design Modal
+import { Modal, Select, Input, Drawer, Flex, Spin, Switch } from 'antd';
 import Convert from './convert-money/convert';
 import Charts from './crypto-charts/charts';
 
@@ -29,12 +28,12 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-900	 p-4 max-w-md mx-auto">
+    <div className="flex flex-col min-h-screen bg-gray-900 p-4 max-w-md mx-auto">
       {/* Header */}
       <header className="flex justify-between items-center mb-8">
         <div className="flex items-center space-x-2">
           <Avatar className="w-10 h-10 border-2 border-purple-500">
-            <AvatarImage src="/placeholder-avatar.jpg" />
+            <AvatarImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?fit=crop&w=300&h=300&q=80" />
             <AvatarFallback>JD</AvatarFallback>
           </Avatar>
           <div>
@@ -60,8 +59,8 @@ export default function Home() {
         </div>
       </header>
 
-      {/* FINASTRA Logo */}
-      <h1 className="text-4xl font-bold text-purple-600 mb-8">FINASTRA</h1>
+      {/* CryptoSend Logo */}
+      <h1 className="text-4xl font-bold text-purple-600 mb-8">CryptoSend</h1>
 
       {/* Balance Card */}
       <Card className="mb-8 bg-gradient-to-r from-purple-500 to-indigo-600 text-white border-none">
@@ -77,12 +76,12 @@ export default function Home() {
 
       {/* My apps section */}
       <section className="mb-8">
-        <h3 className="text-xl text-white font-bold mb-4">My apps</h3>
+        <h3 className="text-xl text-white font-bold mb-4">My Apps</h3>
         <div className="grid grid-cols-3 gap-4">
           <Card className="bg-purple-500 hover:shadow-md transition-shadow">
             <CardContent className="p-4 flex flex-col items-center justify-center">
               <CreditCard className="w-8 h-8 text-white mb-2" />
-              <span className="text-sm font-medium text-white">Fin bank</span>
+              <span className="text-sm font-medium text-white">Wallet</span>
             </CardContent>
           </Card>
           <Card className="bg-purple-500 hover:shadow-md transition-shadow">
@@ -98,7 +97,7 @@ export default function Home() {
             </CardContent>
           </Card>
         </div>
-    </section>
+      </section>
 
       {/* Quick Actions */}
       <section className="mb-8">
@@ -107,12 +106,11 @@ export default function Home() {
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center justify-center"
-            // onClick={showDrawer} // Show modal on click
-            onClick={showConvertDrawer} // Show modal on click
+            onClick={showConvertDrawer}
           >
             <CreditCard className="w-6 h-6 mb-2" />
             <span>Transfer</span>
-          </Button>{' '}
+          </Button>
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center justify-center"
@@ -135,14 +133,14 @@ export default function Home() {
         onClose={handleCloseConvertDrawer}
       />
 
-      <Charts></Charts>
+      <Charts />
 
       <section className="mb-8">
         <h3 className="text-xl text-white font-bold mb-4">Getting started</h3>
         <Card className="overflow-hidden">
           <img
-            src="/placeholder.svg?height=200&width=400"
-            alt="Person using financial app"
+            src="https://images.unsplash.com/photo-1605792657660-596af9009e82?auto=format&fit=crop&w=800&h=320&q=80"
+            alt="Cryptocurrency interface on smartphone"
             className="w-full h-40 object-cover"
           />
           <CardContent className="p-4 space-y-4">
