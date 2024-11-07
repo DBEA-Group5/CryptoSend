@@ -52,18 +52,18 @@ export default function Home() {
             </div>
             <div className="flex space-x-2">
               <Button
-                size="icon"
+                size="lg"
                 variant="ghost"
-                className="text-gray-400 hover:text-purple-500 hover:bg-purple-500/10"
+                className="text-gray-400 hover:text-purple-500 hover:bg-purple-500/10 p-2"
               >
-                <Bell className="w-6 h-6" />
+                <Bell className="w-8 h-8" />
               </Button>
               <Button
-                size="icon"
+                size="lg"
                 variant="ghost"
-                className="text-gray-400 hover:text-purple-500 hover:bg-purple-500/10"
+                className="text-gray-400 hover:text-purple-500 hover:bg-purple-500/10 p-2"
               >
-                <Search className="w-6 h-6" />
+                <Search className="w-8 h-8" />
               </Button>
             </div>
           </header>
