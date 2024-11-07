@@ -30,13 +30,14 @@ ChartJS.register(
 const Charts = () => {
   const [chartData, setChartData] = useState({});
   const [loading, setLoading] = useState(true);
+  const [timeRange, setTimeRange] = useState('7');
   const [allData, setAllData] = useState([]);
+  const [currency, setCurrency] = useState('SGD');
   const [error, setError] = useState(null);
 
-  // Define a mapping of country names to their corresponding currency codes
   const countryCurrencyMapping = {
-    USA: 'USD',
     Singapore: 'SGD',
+    USA: 'USD',
     Eurozone: 'EUR',
     Japan: 'JPY',
     Australia: 'AUD',
