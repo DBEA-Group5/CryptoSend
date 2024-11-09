@@ -1,6 +1,7 @@
 // src/pages/Login.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import axios from 'axios'; // Import Axios for making API requests
 
 const Login = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState('');
@@ -8,20 +9,42 @@ const Login = ({ onLoginSuccess }) => {
   const [error, setError] = useState('');
   const navigate = useNavigate(); // Hook to navigate programmatically
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     // Simple validation (for example purposes)
-    if (email === 'admin@example.com' && password === 'password123') {
-      onLoginSuccess(); // Call the login success function passed from App.jsx
-      navigate('/home'); // Navigate to home page on successful login
-    } else {
-      setError('Invalid credentials');
+    if (!email || !password) {
+      setError('Please enter both email and password');
+      return;
+    }
+
+    onLoginSuccess();
+    navigate('/home');
+
+    try {
+      // Make API call using Axios
+      const response = await axios.post('https://your-api-endpoint.com/login', {
+        email,
+        password,
+      });
+
+      if (response.status === 200) {
+        // On successful login, call the onLoginSuccess function passed from App.jsx
+        onLoginSuccess();
+        navigate('/home'); // Navigate to home page on successful login
+      }
+    } catch (error) {
+      // Handle error if the user is not found or credentials are invalid
+      if (error.response && error.response.status === 401) {
+        setError('Invalid credentials, please try again.');
+      } else {
+        setError('An error occurred. Please try again later.');
+      }
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100 w-screen">
+    <div className="flex justify-center items-center h-screen bg-gradient-to-r from-blue-950 to-purple-950 w-screen">
       <div className="bg-white p-8 rounded-lg shadow-lg w-80 max-w-md">
         <h2 className="text-2xl font-semibold text-center mb-6">Login</h2>
         <form onSubmit={handleLogin}>
