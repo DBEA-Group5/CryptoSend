@@ -1,8 +1,10 @@
-// Charts.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Line } from 'react-chartjs-2';
-import { Tabs, Spin, Card, Select } from 'antd'; // Import Ant Design Select for dropdown
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/Select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/Tabs';
+import { ChartContainer } from '../../components/ui/chart';
+import { Loader2 } from 'lucide-react';
 
 import {
   Chart as ChartJS,
@@ -15,7 +17,6 @@ import {
   Legend,
 } from 'chart.js';
 
-// Register chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -25,160 +26,242 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-const { TabPane } = Tabs;
-const { Option } = Select; // Extract Option from Select
 
 const Charts = () => {
   const [chartData, setChartData] = useState({});
   const [loading, setLoading] = useState(true);
-  const [timeRange, setTimeRange] = useState(7); // Default to 7 days
+  const [timeRange, setTimeRange] = useState('7');
   const [allData, setAllData] = useState([]);
-  const [currency, setCurrency] = useState('SGD'); // Default currency
+  const [currency, setCurrency] = useState('SGD');
+  const [error, setError] = useState(null);
 
-  // Define a mapping of country names to their corresponding currency codes
   const countryCurrencyMapping = {
-    USA: 'USD',
     Singapore: 'SGD',
+    USA: 'USD',
     Eurozone: 'EUR',
     Japan: 'JPY',
     Australia: 'AUD',
-    // Add more countries and currencies as needed
   };
 
-  // Fetch data from API whenever currency changes
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
+      setError(null);
       try {
+        console.log(`Fetching data for ${currency}`);
         const response = await axios.get(
           'https://personal-mkie0uyz.outsystemscloud.com/Currency_Convert/rest/ExposeAPI/GetListCurrency',
           {
             params: {
-              fiat1: currency,
+              fiat1: currency.toLowerCase(),
             },
           }
         );
-        const prices = response.data.prices;
-        setAllData(prices); // Store full data for future filtering
-        updateChart(prices, timeRange); // Update chart with new data
+        
+        console.log('API Response:', response.data);
+        
+        if (response.data && Array.isArray(response.data.prices)) {
+          const prices = response.data.prices;
+          console.log(`Received ${prices.length} price points for ${currency}`);
+          setAllData(prices);
+          updateChart(prices, parseInt(timeRange));
+        } else {
+          console.error('Invalid data format received:', response.data);
+          setError(`Invalid data format received for ${currency}`);
+          setAllData([]);
+          setChartData({
+            labels: [],
+            datasets: []
+          });
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
+        setError(`Error fetching data for ${currency}: ${error.message}`);
+        setAllData([]);
+        setChartData({
+          labels: [],
+          datasets: []
+        });
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [currency, timeRange]); // Fetch data when currency or time range changes
+  }, [currency, timeRange]);
 
-  // Function to update the chart based on time range
   const updateChart = (data, range) => {
-    const filteredData = data.slice(-range); // Filter the last N days
-    const days = filteredData.map((price) =>
-      new Date(price.__singleArrayAttribute[0]).toLocaleDateString('en-GB')
-    );
+    console.log(`Updating chart with ${data.length} data points for ${range} days`);
+    if (!Array.isArray(data) || data.length === 0) {
+      console.error('No valid data to update chart');
+      setChartData({
+        labels: [],
+        datasets: []
+      });
+      return;
+    }
+
+    const filteredData = data.slice(-range);
+    const days = filteredData.map((price) => {
+      const date = new Date(price.__singleArrayAttribute[0]);
+      return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+    });
     const values = filteredData.map((price) => price.__singleArrayAttribute[1]);
+
+    console.log('Processed data:', { days, values });
+
+    const minValue = Math.min(...values) * 0.9999;
+    const maxValue = Math.max(...values) * 1.0001;
 
     setChartData({
       labels: days,
       datasets: [
         {
-          label: `USDC to ${currency} Price Over Last ${range} Days`,
+          label: `USDC to ${currency} Price`,
           data: values,
-          borderColor: 'rgba(75, 192, 192, 1)',
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(138, 43, 226, 1)',
+          backgroundColor: 'rgba(138, 43, 226, 0.2)',
           fill: true,
           tension: 0.1,
+          pointRadius: 3,
+          pointHoverRadius: 5,
         },
       ],
     });
   };
 
-  // Handle tab change to filter data
-  const handleTabChange = (key) => {
-    setTimeRange(parseInt(key));
-    updateChart(allData, parseInt(key));
+  const handleTabChange = (value) => {
+    setTimeRange(value);
+    updateChart(allData, parseInt(value));
   };
 
   return (
-    <div>
+    <div className="bg-[#1e2329] rounded-lg p-4 w-full max-w-md">
       <h2 className="text-xl text-white font-bold mb-4">
         Cryptocurrency Prices
       </h2>
-
-      <Card>
-        {/* Dropdown for country selection */}
-        <Select
-          defaultValue="SGD"
-          style={{ width: 120, marginBottom: 16 }}
-          onChange={(value) => setCurrency(value)}
-        >
-          {Object.entries(countryCurrencyMapping).map(([country, currency]) => (
-            <Option key={currency} value={currency}>
-              {country} ({currency})
-            </Option>
-          ))}
+      
+      <div className="space-y-4">
+        <Select value={currency} onValueChange={setCurrency}>
+          <SelectTrigger className="w-full bg-[#282d34] border-gray-700 text-white">
+            <SelectValue placeholder="Select currency" />
+          </SelectTrigger>
+          <SelectContent className="bg-[#282d34] border-gray-700">
+            {Object.entries(countryCurrencyMapping).map(([country, curr]) => (
+              <SelectItem 
+                key={curr} 
+                value={curr}
+                className="text-white hover:bg-gray-700"
+              >
+                {country} ({curr})
+              </SelectItem>
+            ))}
+          </SelectContent>
         </Select>
 
-        <Tabs
-          style={{ background: 'white', borderRadius: '10px' }}
-          defaultActiveKey="7"
-          onChange={handleTabChange}
-        >
-          <TabPane
-            style={{ background: 'white' }}
-            tab="120 Days"
-            key="120"
-          ></TabPane>
-          <TabPane tab="30 Days" key="30"></TabPane>
-          <TabPane tab="7 Days" key="7"></TabPane>
+        <Tabs value={timeRange} onValueChange={handleTabChange} className="w-full">
+          <TabsList className="bg-[#282d34] border-gray-700 p-1 w-full grid grid-cols-3">
+            <TabsTrigger 
+              value="120" 
+              className="text-xs text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
+            >
+              120 Days
+            </TabsTrigger>
+            <TabsTrigger 
+              value="30" 
+              className="text-xs text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
+            >
+              30 Days
+            </TabsTrigger>
+            <TabsTrigger 
+              value="7" 
+              className="text-xs text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
+            >
+              7 Days
+            </TabsTrigger>
+          </TabsList>
         </Tabs>
 
         {loading ? (
-          <Spin tip="Loading chart data..." />
+          <div className="flex justify-center items-center h-[200px]">
+            <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+          </div>
+        ) : error ? (
+          <div className="text-red-500 text-center h-[200px] flex items-center justify-center">
+            {error}
+          </div>
         ) : (
-          <Line
-            data={chartData}
-            options={{
-              responsive: true,
-              plugins: {
-                legend: {
-                  position: 'top',
-                },
-                title: {
-                  display: true,
-                  text: `Cryptocurrency Price Trend (Last ${timeRange} Days)`,
-                },
-              },
-              scales: {
-                x: {
-                  title: {
+          <ChartContainer className="h-[200px] w-full">
+            <Line
+              data={chartData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
                     display: true,
-                    text: 'Date',
-                  },
-                },
-                y: {
-                  title: {
-                    display: true,
-                    text: 'Price (in SGD)',
-                  },
-                  ticks: {
-                    stepSize: 0.01,
-                    autoSkip: false,
-                    callback: function (value) {
-                      return value.toFixed(2); // Format as 1.3++
+                    position: 'top',
+                    align: 'start',
+                    labels: {
+                      color: 'white',
+                      boxWidth: 12,
+                      padding: 8,
+                      font: { size: 10 },
                     },
                   },
-                  beginAtZero: false,
-                  min: 1.27,
-                  max: 1.37,
+                  title: {
+                    display: true,
+                    text: `Cryptocurrency Price Trend (Last ${timeRange} Days)`,
+                    color: 'white',
+                    padding: { bottom: 10 },
+                    font: { size: 12 },
+                  },
                 },
-              },
-            }}
-            height={300}
-          />
+                scales: {
+                  x: {
+                    grid: {
+                      color: 'rgba(255, 255, 255, 0.1)',
+                      drawBorder: false,
+                    },
+                    ticks: {
+                      color: 'white',
+                      font: { size: 9 },
+                      maxRotation: 0,
+                      autoSkip: true,
+                      maxTicksLimit: 7,
+                    },
+                  },
+                  y: {
+                    position: 'left',
+                    grid: {
+                      color: 'rgba(255, 255, 255, 0.1)',
+                      drawBorder: false,
+                    },
+                    ticks: {
+                      color: 'white',
+                      font: { size: 9 },
+                      padding: 4,
+                      callback: function(value) {
+                        return value.toFixed(3);
+                      },
+                    },
+                  },
+                },
+                interaction: {
+                  mode: 'index',
+                  intersect: false,
+                },
+                elements: {
+                  point: {
+                    radius: 2,
+                    hoverRadius: 4,
+                  },
+                },
+              }}
+            />
+          </ChartContainer>
         )}
-      </Card>
+      </div>
     </div>
   );
 };

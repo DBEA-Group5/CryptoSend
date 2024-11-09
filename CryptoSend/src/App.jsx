@@ -4,6 +4,11 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Im
 import Login from './pages/login';
 import Home from './pages/Home';
 import './index.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import Home from './pages/Home'
+import BalanceDetails from './pages/BalanceDetails'
+import Convert from './pages/convert-money/convert'
+import './index.css'
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -12,6 +17,7 @@ const App = () => {
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
   };
+
 
   return (
     <Router>
@@ -36,9 +42,13 @@ const App = () => {
           path="/"
           element={<Login onLoginSuccess={handleLoginSuccess} />}
         />
+         <Route path="/" element={<Home />} />
+        <Route path="/balance-details" element={<BalanceDetails />} />
+        <Route path="/convert" element={<Convert />} />
       </Routes>
     </Router>
   );
 };
+
 
 export default App;
