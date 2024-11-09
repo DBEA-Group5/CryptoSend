@@ -3,9 +3,6 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Import React Router components
 import Login from './pages/login';
 import Home from './pages/Home';
-import './index.css';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import Home from './pages/Home'
 import BalanceDetails from './pages/BalanceDetails'
 import Convert from './pages/convert-money/convert'
 import './index.css'

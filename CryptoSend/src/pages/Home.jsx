@@ -20,7 +20,6 @@ import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
 import { Progress } from '../components/ui/Progress';
 import Charts from './crypto-charts/charts';
-import { useNavigate } from 'react-router-dom';
 import TabBar from '../components/ui/TabBar';
 
 export default function Home() {
