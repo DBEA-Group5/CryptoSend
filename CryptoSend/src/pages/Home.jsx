@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import {
   Bell,
   Search,
@@ -21,6 +22,7 @@ import { Card, CardContent } from '../components/ui/Card';
 import { Progress } from '../components/ui/Progress';
 import Charts from './crypto-charts/charts';
 import TabBar from '../components/ui/TabBar';
+import WalletCard from './Wallet';
 
 export default function Home() {
   const [isConvertVisible, setIsConvertVisible] = useState(false);
@@ -52,7 +54,9 @@ export default function Home() {
                 <AvatarFallback>JD</AvatarFallback>
               </Avatar>
               <div>
-                <h2 className="font-semibold text-white text-lg">Welcome back</h2>
+                <h2 className="font-semibold text-white text-lg">
+                  Welcome back
+                </h2>
                 <p className="text-sm text-gray-400">John Doe</p>
               </div>
             </div>
@@ -75,23 +79,12 @@ export default function Home() {
           </header>
 
           {/* CryptoSend Logo */}
-          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 mb-8">CryptoSend</h1>
+          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 mb-8">
+            CryptoSend
+          </h1>
 
           {/* Balance Card */}
-          <Card className="mb-8 bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 text-white border-none overflow-hidden relative">
-            <div className="absolute inset-0 bg-black opacity-10 z-0"></div>
-            <CardContent className="p-6 relative z-10">
-              <h3 className="text-lg font-medium mb-2">Total Balance</h3>
-              <p className="text-4xl font-bold mb-4">$12,345.67</p>
-              <div className="flex justify-between text-sm">
-                <span className="bg-white/20 px-2 py-1 rounded-full">+2.5% from last month</span>
-                <Link to="/balance-details" className="text-white hover:underline flex items-center">
-                  View Details
-                  <ChevronRight className="w-4 h-4 ml-1" />
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+          <WalletCard></WalletCard>
 
           {/* Quick Actions */}
           <section className="mb-8">
@@ -128,10 +121,19 @@ export default function Home() {
             <Card className="bg-gray-800 text-white overflow-hidden">
               <CardContent className="p-0">
                 {cryptoData.map((crypto, index) => (
-                  <div key={crypto.symbol} className={`flex justify-between items-center p-4 ${index !== cryptoData.length - 1 ? 'border-b border-gray-700' : ''}`}>
+                  <div
+                    key={crypto.symbol}
+                    className={`flex justify-between items-center p-4 ${
+                      index !== cryptoData.length - 1
+                        ? 'border-b border-gray-700'
+                        : ''
+                    }`}
+                  >
                     <div className="flex items-center">
                       <Avatar className="w-10 h-10 mr-3">
-                        <AvatarImage src={`https://cryptologos.cc/logos/${crypto.name.toLowerCase()}-${crypto.symbol.toLowerCase()}-logo.png`} />
+                        <AvatarImage
+                          src={`https://cryptologos.cc/logos/${crypto.name.toLowerCase()}-${crypto.symbol.toLowerCase()}-logo.png`}
+                        />
                         <AvatarFallback>{crypto.symbol}</AvatarFallback>
                       </Avatar>
                       <div>
@@ -140,9 +142,19 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold">${crypto.price.toLocaleString()}</p>
-                      <p className={`text-sm ${crypto.change >= 0 ? 'text-green-400' : 'text-red-400'} flex items-center justify-end`}>
-                        {crypto.change >= 0 ? <ArrowUpRight className="w-3 h-3 mr-1" /> : <ArrowDownRight className="w-3 h-3 mr-1" />}
+                      <p className="font-semibold">
+                        ${crypto.price.toLocaleString()}
+                      </p>
+                      <p
+                        className={`text-sm ${
+                          crypto.change >= 0 ? 'text-green-400' : 'text-red-400'
+                        } flex items-center justify-end`}
+                      >
+                        {crypto.change >= 0 ? (
+                          <ArrowUpRight className="w-3 h-3 mr-1" />
+                        ) : (
+                          <ArrowDownRight className="w-3 h-3 mr-1" />
+                        )}
                         {Math.abs(crypto.change)}%
                       </p>
                     </div>
@@ -154,15 +166,22 @@ export default function Home() {
 
           {/* Investment Goal */}
           <section className="mb-8">
-            <h3 className="text-xl text-white font-bold mb-4">Investment Goal</h3>
+            <h3 className="text-xl text-white font-bold mb-4">
+              Investment Goal
+            </h3>
             <Card className="bg-gray-800 text-white overflow-hidden">
               <CardContent className="p-4">
                 <div className="flex justify-between items-center mb-2">
                   <p className="font-semibold">Monthly Goal</p>
                   <p className="text-sm text-gray-400">$800 / $1000</p>
                 </div>
-                <Progress value={80} className="h-2 mb-2 bg-purple-900 [&::-webkit-progress-value]:bg-purple-400" />
-                <p className="text-sm text-gray-400">You're 80% of the way there!</p>
+                <Progress
+                  value={80}
+                  className="h-2 mb-2 bg-purple-900 [&::-webkit-progress-value]:bg-purple-400"
+                />
+                <p className="text-sm text-gray-400">
+                  You're 80% of the way there!
+                </p>
               </CardContent>
             </Card>
           </section>
@@ -172,14 +191,31 @@ export default function Home() {
             <h3 className="text-xl text-white font-bold mb-4">My Apps</h3>
             <div className="grid grid-cols-3 gap-4">
               {[
-                { icon: CreditCard, label: 'Wallet', color: 'from-purple-500 to-indigo-500' },
-                { icon: PieChart, label: 'Analytics', color: 'from-pink-500 to-rose-500' },
-                { icon: Building2, label: 'Retail', color: 'from-orange-500 to-amber-500' },
+                {
+                  icon: CreditCard,
+                  label: 'Wallet',
+                  color: 'from-purple-500 to-indigo-500',
+                },
+                {
+                  icon: PieChart,
+                  label: 'Analytics',
+                  color: 'from-pink-500 to-rose-500',
+                },
+                {
+                  icon: Building2,
+                  label: 'Retail',
+                  color: 'from-orange-500 to-amber-500',
+                },
               ].map(({ icon: Icon, label, color }) => (
-                <Card key={label} className={`bg-gradient-to-br ${color} hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1`}>
+                <Card
+                  key={label}
+                  className={`bg-gradient-to-br ${color} hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1`}
+                >
                   <CardContent className="p-4 flex flex-col items-center justify-center">
                     <Icon className="w-8 h-8 text-white mb-2" />
-                    <span className="text-sm font-medium text-white">{label}</span>
+                    <span className="text-sm font-medium text-white">
+                      {label}
+                    </span>
                   </CardContent>
                 </Card>
               ))}
@@ -189,7 +225,9 @@ export default function Home() {
           <Charts />
 
           <section className="mb-8">
-            <h3 className="text-xl text-white font-bold mb-4">Getting started</h3>
+            <h3 className="text-xl text-white font-bold mb-4">
+              Getting started
+            </h3>
             <Card className="overflow-hidden bg-gray-800">
               <img
                 src="https://images.unsplash.com/photo-1605792657660-596af9009e82?auto=format&fit=crop&w=800&h=320&q=80"

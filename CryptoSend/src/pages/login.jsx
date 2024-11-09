@@ -29,9 +29,12 @@ const Login = ({ onLoginSuccess }) => {
       });
 
       if (response.status === 200) {
-        // On successful login, call the onLoginSuccess function passed from App.jsx
+        // Save login status to localStorage
+        localStorage.setItem('isLoggedIn', 'true');
+
+        // Call the login success function passed from App.jsx
         onLoginSuccess();
-        navigate('/home'); // Navigate to home page on successful login
+        navigate('/home');
       }
     } catch (error) {
       // Handle error if the user is not found or credentials are invalid
