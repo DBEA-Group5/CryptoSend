@@ -2,21 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '../../components/ui/Avatar';
-import { Button } from '../../components/ui/Button';
-import { Card, CardContent } from '../../components/ui/Card';
-import { Input } from '../../components/ui/Input';
+import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/Avatar';
+import { Button } from '../components/ui/Button';
+import { Card, CardContent } from '../components/ui/Card';
+import { Input } from '../components/ui/Input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../../components/ui/Select';
+} from '../components/ui/Select';
 
 const countryOptions = [
   { code: 'SG', label: 'SGD', flag: '🇸🇬' },
@@ -26,7 +22,7 @@ const countryOptions = [
   { code: 'JP', label: 'JPY', flag: '🇯🇵' },
 ];
 
-export default function Convert() {
+export default function AddMoney() {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState('');
   const [outputValue, setOutputValue] = useState('');
@@ -36,44 +32,18 @@ export default function Convert() {
   const [convertedCurrency2, setConvertedCurrency2] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const fetchCurrencyConversion = async (currency, setCurrencyValue) => {
-    try {
-      const response = await axios.get(
-        `https://personal-mkie0uyz.outsystemscloud.com/Currency_Convert/rest/ExposeAPI/GetCurrency/`,
-        {
-          params: {
-            Fiat1: currency.toLowerCase(),
-          },
-        }
-      );
-
-      const array_key = currency.toLowerCase();
-      const conversionRate = 1 / Number(response.data[array_key]).toFixed(3);
-      setCurrencyValue(conversionRate);
-    } catch (error) {
-      console.error('Error fetching currency conversion:', error);
-      setCurrencyValue(0);
-    }
-  };
 
   useEffect(() => {
-    const fetchConversions = async () => {
-      setLoading(true);
-      await fetchCurrencyConversion(inputCurrency, setConvertedCurrency);
-      await fetchCurrencyConversion(outputCurrency, setConvertedCurrency2);
-      setLoading(false);
-    };
-
-    fetchConversions();
-  }, [inputCurrency, outputCurrency]);
-
-  useEffect(() => {
-    if (inputValue) {
-      setOutputValue(
-        (inputValue * convertedCurrency * convertedCurrency2).toFixed(2)
-      );
-    }
-  }, [inputValue, convertedCurrency, convertedCurrency2]);
+    // Usage example:
+    // fetchTransactionHistory('SGD', '2022-01-01', '2026-01-01')
+    //   .then((data) => {
+    //     console.log('Fetched transactions:', data);
+    //     // Do something with the data, e.g., set it to state or display it
+    //   })
+    //   .catch((error) => {
+    //     console.error('Failed to fetch transaction history:', error);
+    //   });
+  });
 
   const handleInputChange = (e) => {
     const input = e.target.value;
@@ -98,7 +68,7 @@ export default function Convert() {
         >
           <ArrowLeft className="w-6 h-6" />
         </Button>
-        <h1 className="text-xl font-bold text-white">Send Money</h1>
+        <h1 className="text-xl font-bold text-white">Deposit Funds</h1>
         <div className="w-6" />
       </header>
 
@@ -106,7 +76,7 @@ export default function Convert() {
         <Card className="bg-[#1e2329] border-gray-800">
           <CardContent className="p-4">
             <h2 className="text-lg font-semibold text-white mb-2">
-              Exchange Rate
+              Add Money From tBank
             </h2>
             <div className="space-y-1 text-gray-400">
               <p>

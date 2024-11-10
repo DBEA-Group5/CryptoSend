@@ -1,8 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Line } from 'react-chartjs-2';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/Select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/Tabs';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/Select';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '../../components/ui/Tabs';
 import { ChartContainer } from '../../components/ui/chart';
 import { Loader2 } from 'lucide-react';
 
@@ -40,7 +51,7 @@ const Charts = () => {
     USA: 'USD',
     Eurozone: 'EUR',
     Japan: 'JPY',
-    Australia: 'AUD',
+    Thailand: 'THB',
   };
 
   useEffect(() => {
@@ -57,9 +68,9 @@ const Charts = () => {
             },
           }
         );
-        
+
         console.log('API Response:', response.data);
-        
+
         if (response.data && Array.isArray(response.data.prices)) {
           const prices = response.data.prices;
           console.log(`Received ${prices.length} price points for ${currency}`);
@@ -71,7 +82,7 @@ const Charts = () => {
           setAllData([]);
           setChartData({
             labels: [],
-            datasets: []
+            datasets: [],
           });
         }
       } catch (error) {
@@ -80,7 +91,7 @@ const Charts = () => {
         setAllData([]);
         setChartData({
           labels: [],
-          datasets: []
+          datasets: [],
         });
       } finally {
         setLoading(false);
@@ -91,12 +102,14 @@ const Charts = () => {
   }, [currency, timeRange]);
 
   const updateChart = (data, range) => {
-    console.log(`Updating chart with ${data.length} data points for ${range} days`);
+    console.log(
+      `Updating chart with ${data.length} data points for ${range} days`
+    );
     if (!Array.isArray(data) || data.length === 0) {
       console.error('No valid data to update chart');
       setChartData({
         labels: [],
-        datasets: []
+        datasets: [],
       });
       return;
     }
@@ -104,7 +117,11 @@ const Charts = () => {
     const filteredData = data.slice(-range);
     const days = filteredData.map((price) => {
       const date = new Date(price.__singleArrayAttribute[0]);
-      return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+      return `${date.getDate().toString().padStart(2, '0')}/${(
+        date.getMonth() + 1
+      )
+        .toString()
+        .padStart(2, '0')}`;
     });
     const values = filteredData.map((price) => price.__singleArrayAttribute[1]);
 
@@ -140,7 +157,7 @@ const Charts = () => {
       <h2 className="text-xl text-white font-bold mb-4">
         Cryptocurrency Prices
       </h2>
-      
+
       <div className="space-y-4">
         <Select value={currency} onValueChange={setCurrency}>
           <SelectTrigger className="w-full bg-[#282d34] border-gray-700 text-white">
@@ -148,8 +165,8 @@ const Charts = () => {
           </SelectTrigger>
           <SelectContent className="bg-[#282d34] border-gray-700">
             {Object.entries(countryCurrencyMapping).map(([country, curr]) => (
-              <SelectItem 
-                key={curr} 
+              <SelectItem
+                key={curr}
                 value={curr}
                 className="text-white hover:bg-gray-700"
               >
@@ -159,22 +176,26 @@ const Charts = () => {
           </SelectContent>
         </Select>
 
-        <Tabs value={timeRange} onValueChange={handleTabChange} className="w-full">
+        <Tabs
+          value={timeRange}
+          onValueChange={handleTabChange}
+          className="w-full"
+        >
           <TabsList className="bg-[#282d34] border-gray-700 p-1 w-full grid grid-cols-3">
-            <TabsTrigger 
-              value="120" 
+            <TabsTrigger
+              value="120"
               className="text-xs text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
             >
               120 Days
             </TabsTrigger>
-            <TabsTrigger 
-              value="30" 
+            <TabsTrigger
+              value="30"
               className="text-xs text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
             >
               30 Days
             </TabsTrigger>
-            <TabsTrigger 
-              value="7" 
+            <TabsTrigger
+              value="7"
               className="text-xs text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
             >
               7 Days
@@ -241,7 +262,7 @@ const Charts = () => {
                       color: 'white',
                       font: { size: 9 },
                       padding: 4,
-                      callback: function(value) {
+                      callback: function (value) {
                         return value.toFixed(3);
                       },
                     },

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import {
   Bell,
   Search,
@@ -23,6 +22,7 @@ import { Progress } from '../components/ui/Progress';
 import Charts from './crypto-charts/charts';
 import TabBar from '../components/ui/TabBar';
 import WalletCard from './Wallet';
+import Transactions from './Transactions';
 
 export default function Home() {
   const [isConvertVisible, setIsConvertVisible] = useState(false);
@@ -43,10 +43,14 @@ export default function Home() {
     navigate('/convert');
   };
 
+  const handleAddMoney = () => {
+    navigate('/addMoney');
+  };
+
   return (
-    <div className="flex flex-col min-h-screen bg-gray-900 w-full max-w-md mx-auto">
+    <div className="flex flex-col min-h-screen bg-gray-900 w-[400px] mx-auto">
       <div className="flex-1 overflow-y-auto pb-20">
-        <div className="px-4 py-6">
+        <div className="px-4 py-6 ">
           <header className="flex justify-between items-center mb-8">
             <div className="flex items-center space-x-3">
               <Avatar className="w-12 h-12 border-2 border-purple-500">
@@ -80,7 +84,7 @@ export default function Home() {
 
           {/* CryptoSend Logo */}
           <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 mb-8">
-            CryptoSend
+            PAYGPal
           </h1>
 
           {/* Balance Card */}
@@ -101,6 +105,7 @@ export default function Home() {
               <Button
                 variant="outline"
                 className="h-auto py-4 flex flex-col items-center justify-center bg-gray-800 border-gray-700 hover:bg-gray-700 transition-colors"
+                onClick={handleAddMoney}
               >
                 <Plus className="w-6 h-6 mb-2 text-purple-400" />
                 <span className="text-white">Add Money</span>
@@ -116,53 +121,7 @@ export default function Home() {
           </section>
 
           {/* Crypto Portfolio */}
-          <section className="mb-8">
-            <h3 className="text-xl text-white font-bold mb-4">Your Crypto</h3>
-            <Card className="bg-gray-800 text-white overflow-hidden">
-              <CardContent className="p-0">
-                {cryptoData.map((crypto, index) => (
-                  <div
-                    key={crypto.symbol}
-                    className={`flex justify-between items-center p-4 ${
-                      index !== cryptoData.length - 1
-                        ? 'border-b border-gray-700'
-                        : ''
-                    }`}
-                  >
-                    <div className="flex items-center">
-                      <Avatar className="w-10 h-10 mr-3">
-                        <AvatarImage
-                          src={`https://cryptologos.cc/logos/${crypto.name.toLowerCase()}-${crypto.symbol.toLowerCase()}-logo.png`}
-                        />
-                        <AvatarFallback>{crypto.symbol}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-semibold">{crypto.name}</p>
-                        <p className="text-sm text-gray-400">{crypto.symbol}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold">
-                        ${crypto.price.toLocaleString()}
-                      </p>
-                      <p
-                        className={`text-sm ${
-                          crypto.change >= 0 ? 'text-green-400' : 'text-red-400'
-                        } flex items-center justify-end`}
-                      >
-                        {crypto.change >= 0 ? (
-                          <ArrowUpRight className="w-3 h-3 mr-1" />
-                        ) : (
-                          <ArrowDownRight className="w-3 h-3 mr-1" />
-                        )}
-                        {Math.abs(crypto.change)}%
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </section>
+          <Transactions></Transactions>
 
           {/* Investment Goal */}
           <section className="mb-8">
@@ -221,52 +180,10 @@ export default function Home() {
               ))}
             </div>
           </section>
-
-          <Charts />
-
-          <section className="mb-8">
-            <h3 className="text-xl text-white font-bold mb-4">
-              Getting started
-            </h3>
-            <Card className="overflow-hidden bg-gray-800">
-              <img
-                src="https://images.unsplash.com/photo-1605792657660-596af9009e82?auto=format&fit=crop&w=800&h=320&q=80"
-                alt="Cryptocurrency interface on smartphone"
-                className="w-full h-40 object-cover"
-              />
-              <CardContent className="p-4 space-y-4">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start hover:bg-purple-500/10 text-white"
-                >
-                  <HelpCircle className="w-5 h-5 mr-3 text-purple-400" />
-                  <div className="text-left">
-                    <div className="font-semibold">Help center</div>
-                    <div className="text-sm text-gray-400">
-                      Get started with tutorials
-                    </div>
-                  </div>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start hover:bg-purple-500/10 text-white"
-                >
-                  <Twitter className="w-5 h-5 mr-3 text-purple-400" />
-                  <div className="text-left">
-                    <div className="font-semibold">Follow us</div>
-                    <div className="text-sm text-gray-400">
-                      Get our latest updates
-                    </div>
-                  </div>
-                </Button>
-              </CardContent>
-            </Card>
-          </section>
+          {/* Bottom Navigation Bar */}
+          <TabBar />
         </div>
       </div>
-
-      {/* Bottom Navigation Bar */}
-      <TabBar />
     </div>
   );
 }

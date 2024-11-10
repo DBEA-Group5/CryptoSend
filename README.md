@@ -1,1 +1,1 @@
-# CryptoSend
+# PAYGPal

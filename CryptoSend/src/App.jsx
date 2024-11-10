@@ -3,9 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Import React Router components
 import Login from './pages/login';
 import Home from './pages/Home';
+import Markets from './pages/Markets';
 import BalanceDetails from './pages/BalanceDetails';
 import Convert from './pages/convert-money/convert';
 import './index.css';
+import AddMoney from './pages/AddMoney';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
@@ -53,6 +55,8 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/balance-details" element={<BalanceDetails />} />
         <Route path="/convert" element={<Convert />} />
+        <Route path="/addMoney" element={<AddMoney />} />
+        <Route path="/markets" element={<Markets />} />
       </Routes>
     </Router>
   );
