@@ -1,18 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/Avatar';
+import { ArrowLeft } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
 import { Input } from '../components/ui/Input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../components/ui/Select';
 
 const countryOptions = [
   { code: 'SG', label: 'SGD', flag: '🇸🇬' },
@@ -25,37 +17,46 @@ const countryOptions = [
 export default function AddMoney() {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState('');
-  const [outputValue, setOutputValue] = useState('');
   const [inputCurrency, setInputCurrency] = useState('SGD');
-  const [outputCurrency, setOutputCurrency] = useState('USD');
-  const [convertedCurrency, setConvertedCurrency] = useState(0);
-  const [convertedCurrency2, setConvertedCurrency2] = useState(0);
   const [loading, setLoading] = useState(false);
 
+  const topUpWallet = async (customerId, amount, currency) => {
+    if (!amount) return;
 
-  useEffect(() => {
-    // Usage example:
-    // fetchTransactionHistory('SGD', '2022-01-01', '2026-01-01')
-    //   .then((data) => {
-    //     console.log('Fetched transactions:', data);
-    //     // Do something with the data, e.g., set it to state or display it
-    //   })
-    //   .catch((error) => {
-    //     console.error('Failed to fetch transaction history:', error);
-    //   });
-  });
+    console.log(customerId, amount, currency);
+
+  try {
+    setLoading(true);
+    const response = await axios.post(
+      `https://personal-cq8qhlkg.outsystemscloud.com/WalletAPI/rest/WalletService/addFunds`,
+      null, // No body content needed, as we're sending parameters in the URL
+      {
+        params: {
+          CustomerID: customerId,
+          AmountToAdd: amount,
+          Currency: currency,
+        },
+      }
+    );
+    console.log('Top up successful:', response.data);
+    // Handle response, e.g., navigate to success page or show success message
+  } catch (error) {
+    console.error(
+      'Error fetching transaction fee:',
+      error.response?.data || error.message
+    );
+    // Handle error (e.g., show error message to user)
+  } finally {
+    setLoading(false);
+  }
+  };
 
   const handleInputChange = (e) => {
-    const input = e.target.value;
-    setInputValue(input);
-    setLoading(true);
+    setInputValue(e.target.value);
+  };
 
-    setTimeout(() => {
-      setOutputValue(
-        (input * convertedCurrency * convertedCurrency2).toFixed(2)
-      );
-      setLoading(false);
-    }, 1000);
+  const handleTopUp = () => {
+    topUpWallet(13, parseFloat(inputValue), inputCurrency);
   };
 
   return (
@@ -78,45 +79,22 @@ export default function AddMoney() {
             <h2 className="text-lg font-semibold text-white mb-2">
               Add Money From tBank
             </h2>
-            <div className="space-y-1 text-gray-400">
+            {/* <div className="space-y-1 text-gray-400">
               <p>
-                1 {inputCurrency} = {convertedCurrency.toFixed(4)} USDC
+                1 {inputCurrency} = {'<conversion_rate>'} USDC
               </p>
-              <p>
-                1 {outputCurrency} = {convertedCurrency2.toFixed(4)} USDC
-              </p>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
 
         <div className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              From
+              Amount to Deposit into Wallet
             </label>
             <Card className="bg-[#1e2329] border-gray-800">
               <CardContent className="p-4">
                 <div className="flex items-center space-x-4 mb-4">
-                  <Select
-                    value={inputCurrency}
-                    onValueChange={setInputCurrency}
-                  >
-                    <SelectTrigger className="w-[120px] bg-[#282d34] border-gray-700 text-white">
-                      <SelectValue placeholder="Select currency" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-[#282d34] border-gray-700">
-                      {countryOptions.map((option) => (
-                        <SelectItem
-                          key={option.label}
-                          value={option.label}
-                          className="text-white hover:bg-gray-700"
-                        >
-                          <span className="mr-2">{option.flag}</span>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
                   <Input
                     type="number"
                     placeholder="0.00"
@@ -124,62 +102,21 @@ export default function AddMoney() {
                     onChange={handleInputChange}
                     className="flex-1 bg-[#282d34] border-gray-700 text-white placeholder-gray-500 focus:border-purple-500"
                   />
+                  <select
+                    value={inputCurrency}
+                    onChange={(e) => setInputCurrency(e.target.value)}
+                    className="bg-[#282d34] text-white border-gray-700"
+                  >
+                    {countryOptions.map((option) => (
+                      <option key={option.code} value={option.label}>
+                        {option.flag} {option.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <p className="text-sm text-gray-400">
-                  Available balance: 1,000.00 {inputCurrency}
+                  {/* Available balance: 1,000.00 {inputCurrency} */}
                 </p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="flex justify-center">
-            <ArrowRight className="w-6 h-6 text-[#8A2BE2] rotate-90" />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              To
-            </label>
-            <Card className="bg-[#1e2329] border-gray-800">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-4 mb-4">
-                  <Select
-                    value={outputCurrency}
-                    onValueChange={setOutputCurrency}
-                  >
-                    <SelectTrigger className="w-[120px] bg-[#282d34] border-gray-700 text-white">
-                      <SelectValue placeholder="Select currency" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-[#282d34] border-gray-700">
-                      {countryOptions.map((option) => (
-                        <SelectItem
-                          key={option.label}
-                          value={option.label}
-                          className="text-white hover:bg-gray-700"
-                        >
-                          <span className="mr-2">{option.flag}</span>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Input
-                    type="number"
-                    placeholder="0.00"
-                    value={outputValue}
-                    readOnly
-                    className="flex-1 bg-[#282d34] border-gray-700 text-white placeholder-gray-500"
-                  />
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Avatar className="w-8 h-8 border border-gray-700">
-                    <AvatarImage src="/placeholder-user.jpg" alt="Recipient" />
-                    <AvatarFallback className="bg-[#282d34] text-white">
-                      RC
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm text-white">Recipient Name</span>
-                </div>
               </CardContent>
             </Card>
           </div>
@@ -190,6 +127,7 @@ export default function AddMoney() {
         <Button
           className="w-full h-14 bg-[#8A2BE2] hover:bg-[#7B27CC] text-white font-medium text-lg"
           disabled={loading}
+          onClick={handleTopUp}
         >
           {loading ? (
             <span className="flex items-center justify-center">

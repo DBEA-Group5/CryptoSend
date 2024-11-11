@@ -8,12 +8,14 @@ import BalanceDetails from './pages/BalanceDetails';
 import Convert from './pages/convert-money/convert';
 import './index.css';
 import AddMoney from './pages/AddMoney';
+import Settings from './pages/Settings';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   useEffect(() => {
     // Check localStorage for login status
+
     const loggedInStatus = localStorage.getItem('isLoggedIn');
     if (loggedInStatus === 'true') {
       setIsLoggedIn(true);
@@ -57,6 +59,7 @@ const App = () => {
         <Route path="/convert" element={<Convert />} />
         <Route path="/addMoney" element={<AddMoney />} />
         <Route path="/markets" element={<Markets />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </Router>
   );

@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import {
   ArrowLeft,
   DollarSign,
-  TrendingUp,
-  TrendingDown,
-  Info,
   Download,
   HeadphonesIcon,
+  Info,
+  TrendingDown,
+  TrendingUp,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/Avatar';
 import { Button } from '../components/ui/Button';

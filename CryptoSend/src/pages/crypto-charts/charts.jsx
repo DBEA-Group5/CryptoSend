@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
   Select,
@@ -10,22 +11,20 @@ import {
 } from '../../components/ui/Select';
 import {
   Tabs,
-  TabsContent,
   TabsList,
-  TabsTrigger,
+  TabsTrigger
 } from '../../components/ui/Tabs';
 import { ChartContainer } from '../../components/ui/chart';
-import { Loader2 } from 'lucide-react';
 
 import {
-  Chart as ChartJS,
   CategoryScale,
+  Chart as ChartJS,
+  Legend,
   LinearScale,
-  PointElement,
   LineElement,
+  PointElement,
   Title,
   Tooltip,
-  Legend,
 } from 'chart.js';
 
 ChartJS.register(

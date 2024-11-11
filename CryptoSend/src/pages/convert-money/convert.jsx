@@ -34,16 +34,18 @@ export default function Convert() {
   const [outputCurrency, setOutputCurrency] = useState('USD');
   const [convertedCurrency, setConvertedCurrency] = useState(0);
   const [convertedCurrency2, setConvertedCurrency2] = useState(0);
+  const [transactionFee, setTransactionFee] = useState(null);
+  const [finalConvertAmount, setFinalConvertAmount] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState([]); // State for users
+  const [selectedRecipient, setSelectedRecipient] = useState(''); // State for selected recipient
 
   const fetchCurrencyConversion = async (currency, setCurrencyValue) => {
     try {
       const response = await axios.get(
         `https://personal-mkie0uyz.outsystemscloud.com/Currency_Convert/rest/ExposeAPI/GetCurrency/`,
         {
-          params: {
-            Fiat1: currency.toLowerCase(),
-          },
+          params: { Fiat1: currency.toLowerCase() },
         }
       );
 
@@ -56,6 +58,22 @@ export default function Convert() {
     }
   };
 
+  // Fetch users from the API
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get(
+        `https://personal-qjduceog.outsystemscloud.com/FA/rest/users_by_api_key/get_all_user_Id_and_name`
+      );
+      setUsers(response.data); // Store users in state
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers(); // Fetch users when component mounts
+  }, []);
+
   useEffect(() => {
     const fetchConversions = async () => {
       setLoading(true);
@@ -63,7 +81,6 @@ export default function Convert() {
       await fetchCurrencyConversion(outputCurrency, setConvertedCurrency2);
       setLoading(false);
     };
-
     fetchConversions();
   }, [inputCurrency, outputCurrency]);
 
@@ -74,6 +91,38 @@ export default function Convert() {
       );
     }
   }, [inputValue, convertedCurrency, convertedCurrency2]);
+
+  useEffect(() => {
+    const fetchTransactionFee = async () => {
+      if (!inputValue) return;
+
+      try {
+        const response = await axios.get(
+          `https://personal-cq8qhlkg.outsystemscloud.com/CommissionService/rest/CommissionService/getFee`,
+          {
+            params: {
+              Currency: inputCurrency,
+              InputAmount: inputValue,
+            },
+          }
+        );
+
+        setTransactionFee(response.data);
+      } catch (error) {
+        console.error('Error fetching transaction fee:', error);
+        setTransactionFee(null);
+      }
+    };
+
+    fetchTransactionFee();
+  }, [inputCurrency, inputValue]);
+
+  useEffect(() => {
+    // Calculate final amount only when both `inputValue` and `transactionFee` are available
+    if (inputValue && transactionFee !== null) {
+      setFinalConvertAmount(Number(inputValue) + Number(transactionFee));
+    }
+  }, [inputValue, transactionFee]);
 
   const handleInputChange = (e) => {
     const input = e.target.value;
@@ -86,6 +135,10 @@ export default function Convert() {
       );
       setLoading(false);
     }, 1000);
+  };
+
+  const sendMoney = () => {
+    console.log(finalConvertAmount);
   };
 
   return (
@@ -118,8 +171,7 @@ export default function Convert() {
             </div>
           </CardContent>
         </Card>
-
-        <div className="space-y-6">
+        <div>
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               From
@@ -162,8 +214,8 @@ export default function Convert() {
             </Card>
           </div>
 
-          <div className="flex justify-center">
-            <ArrowRight className="w-6 h-6 text-[#8A2BE2] rotate-90" />
+          <div className="flex justify-center mt-4">
+            <ArrowRight className="w-6 h-6 text-[#8A2BE2] rotate-90 my-0 " />
           </div>
 
           <div>
@@ -198,38 +250,65 @@ export default function Convert() {
                     placeholder="0.00"
                     value={outputValue}
                     readOnly
-                    className="flex-1 bg-[#282d34] border-gray-700 text-white placeholder-gray-500"
+                    className="flex-1 bg-[#282d34] border-gray-700 text-white placeholder-gray-500 focus:border-purple-500"
                   />
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Avatar className="w-8 h-8 border border-gray-700">
-                    <AvatarImage src="/placeholder-user.jpg" alt="Recipient" />
-                    <AvatarFallback className="bg-[#282d34] text-white">
-                      RC
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm text-white">Recipient Name</span>
-                </div>
+                <Select
+                  value={selectedRecipient}
+                  onValueChange={(value) => setSelectedRecipient(value)} // Ensure the correct value is set
+                >
+                  <SelectTrigger className="bg-[#1e2329] border-gray-800 text-white">
+                    <SelectValue placeholder="Select recipient" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#282d34] border-gray-700">
+                    {users.map((user) => (
+                      <SelectItem
+                        key={user.User_Id} // Unique key for each user
+                        value={user.User_Id} // Ensure each item has a unique value
+                        className="text-white hover:bg-gray-700"
+                      >
+                        {user.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </CardContent>
             </Card>
           </div>
         </div>
-      </main>
-
-      <footer className="p-4 border-t border-gray-800">
-        <Button
-          className="w-full h-14 bg-[#8A2BE2] hover:bg-[#7B27CC] text-white font-medium text-lg"
-          disabled={loading}
-        >
-          {loading ? (
-            <span className="flex items-center justify-center">
-              <span className="animate-pulse mr-2">•••</span>
-            </span>
-          ) : (
-            'Send Money'
+        <footer className="p-4 border-t border-gray-800">
+          {transactionFee !== null && (
+            <p className="text-sm text-gray-400 text-center mb-2">
+              Transaction Fee: {transactionFee.toFixed(4)} {inputCurrency}
+            </p>
           )}
-        </Button>
-      </footer>
+          {finalConvertAmount !== null && (
+            <p className="text-sm text-purple-400 text-center mb-2">
+              Your wallet will be deducted: {finalConvertAmount.toFixed(4)}{' '}
+              {inputCurrency}
+            </p>
+          )}{' '}
+          {finalConvertAmount !== null && (
+            <p className="text-sm text-purple-400 text-center mb-2">
+              Your recipient will receive: {outputValue} {outputCurrency}
+            </p>
+          )}
+          <Button
+            className="w-full h-14 bg-[#8A2BE2] hover:bg-[#7B27CC] text-white font-medium text-lg"
+            disabled={loading}
+            onClick={sendMoney}
+          >
+            {loading ? (
+              <span className="flex items-center justify-center">
+                <span className="animate-pulse mr-2">•••</span>
+              </span>
+            ) : (
+              'Send Money'
+            )}
+          </Button>
+        </footer>
+        ;
+      </main>
     </div>
   );
 }

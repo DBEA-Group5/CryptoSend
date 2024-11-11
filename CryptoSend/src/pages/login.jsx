@@ -1,43 +1,47 @@
-// src/pages/Login.jsx
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
-import axios from 'axios'; // Import Axios for making API requests
+import axios from 'axios';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Login = ({ onLoginSuccess }) => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // Hook to navigate programmatically
+  const [otp, setOtp] = useState(''); // State to store the OTP input by the user
+  const [otpError, setOtpError] = useState(''); // State to store OTP error message
+  const [showOtpModal, setShowOtpModal] = useState(false); // State to control OTP modal visibility
+  const [serverOtp, setServerOtp] = useState(''); // State to store OTP from the server
+  const navigate = useNavigate();
+
+  //   useEffect(() => {
+  //     // Simulate a successful login by setting a value in localStorage
+  //     onLoginSuccess();
+  //     localStorage.setItem('isLoggedIn', 'true');
+  //     navigate('/home');
+  //   }, [navigate, onLoginSuccess]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Simple validation (for example purposes)
-    if (!email || !password) {
-      setError('Please enter both email and password');
+    if (!username || !password) {
+      setError('Please enter both username and password');
       return;
     }
 
-    onLoginSuccess();
-    navigate('/home');
-
     try {
-      // Make API call using Axios
-      const response = await axios.post('https://your-api-endpoint.com/login', {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `https://personal-qjduceog.outsystemscloud.com/FA/rest/users_by_api_key/post_login_success?username=${encodeURIComponent(
+          username
+        )}&password=${encodeURIComponent(password)}`
+      );
 
       if (response.status === 200) {
-        // Save login status to localStorage
-        localStorage.setItem('isLoggedIn', 'true');
-
-        // Call the login success function passed from App.jsx
-        onLoginSuccess();
-        navigate('/home');
+        // Store user_id in localStorage
+        localStorage.setItem('user_id', response.data.user_id);
+        setServerOtp('1234');
+        setShowOtpModal(true);
+        getUserDetails(response.data.user_id);
       }
     } catch (error) {
-      // Handle error if the user is not found or credentials are invalid
       if (error.response && error.response.status === 401) {
         setError('Invalid credentials, please try again.');
       } else {
@@ -46,18 +50,57 @@ const Login = ({ onLoginSuccess }) => {
     }
   };
 
+  const getUserDetails = async (user_id) => {
+    try {
+      const response = await axios.get(
+        `https://personal-qjduceog.outsystemscloud.com/FA/rest/users_by_api_key/get_user_detail?`,
+        {
+          params: {
+            user_Id: user_id,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        // Store user_id in localStorage
+        localStorage.setItem('username', response.data.Username);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        setError('cannot get username');
+      } else {
+        setError('An error occurred. Please try again later.');
+      }
+    }
+  };
+
+  const handleOtpSubmit = (e) => {
+    e.preventDefault();
+
+    if (otp === serverOtp) {
+      onLoginSuccess();
+      localStorage.setItem('isLoggedIn', 'true');
+      navigate('/home');
+    } else {
+      setOtpError('Incorrect OTP, please try again.');
+    }
+  };
+
   return (
-    <div className="flex justify-center items-center h-screen bg-gradient-to-r from-blue-950 to-purple-950 w-screen">
+    <div className="flex justify-center items-center h-screen bg-gradient-to-r from-blue-950 to-purple-950 w-[400px]">
+      <h1 className="absolute top-32 justify-center items-center text-xl text-white font-bold">
+        PAYGPal
+      </h1>
       <div className="bg-white p-8 rounded-lg shadow-lg w-80 max-w-md">
         <h2 className="text-2xl font-semibold text-center mb-6">Login</h2>
         <form onSubmit={handleLogin}>
           <div className="mb-4">
-            <label className="block text-gray-700">Email</label>
+            <label className="block text-gray-700">Username</label>
             <input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              placeholder="Enter your username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
               className="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -85,6 +128,39 @@ const Login = ({ onLoginSuccess }) => {
           </button>
         </form>
       </div>
+
+      {showOtpModal && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-8 rounded-lg shadow-lg w-80 max-w-md">
+            <h2 className="text-2xl font-semibold text-center mb-6">
+              Enter OTP
+            </h2>
+            <form onSubmit={handleOtpSubmit}>
+              <div className="mb-4">
+                <label className="block text-gray-700">OTP Code</label>
+                <input
+                  type="text"
+                  placeholder="Enter 4 digit OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  maxLength="4"
+                  required
+                  className="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              {otpError && <div className="text-red-500 mb-4">{otpError}</div>}
+
+              <button
+                type="submit"
+                className="w-full bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 transition duration-200"
+              >
+                Submit OTP
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

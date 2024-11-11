@@ -1,36 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { useEffect, useState } from 'react';
 
 import { Card, CardContent } from '../components/ui/Card';
 
-import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/Avatar';
-import {
-  Bell,
-  Search,
-  CreditCard,
-  PieChart,
-  Building2,
-  HelpCircle,
-  Twitter,
-  ArrowUpRight,
-  ArrowDownRight,
-  ChevronRight,
-} from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 
 export default function Transactions() {
-  const navigate = useNavigate();
   const [transactionsData, setTransactionsData] = useState([]);
-
-  // Define gradients for each currency
-  const gradientStyles = {
-    USD: 'from-green-500 via-blue-500 to-indigo-500',
-    SGD: 'from-purple-500 via-pink-500 to-red-500',
-    EUR: 'from-yellow-500 via-orange-500 to-red-500',
-    THB: 'from-teal-500 via-cyan-500 to-blue-500',
-    JPY: 'from-blue-500 via-purple-500 to-pink-500',
-    // Add more as needed
-  };
+  const userId = localStorage.getItem('user_id');
+  console.log('Logged in user ID:', userId);
 
   // Fetch wallet balances from API
   const fetchTransactionHistory = async (currency, startDate, endDate) => {
@@ -43,6 +21,7 @@ export default function Transactions() {
             Currency: currency,
             StartDate: startDate,
             EndDate: endDate,
+            user_id: userId,
           },
           headers: {
             'X-Contacts-Key': '40aaf3c3-2372-485d-b32d-a40663685a8b',

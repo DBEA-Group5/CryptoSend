@@ -1,43 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import {
   Bell,
-  Search,
+  Building2,
   CreditCard,
   PieChart,
-  Building2,
-  HelpCircle,
-  Twitter,
-  ArrowUpRight,
-  ArrowDownRight,
-  Wallet,
-  Send,
   Plus,
-  ChevronRight,
+  Search,
+  Send,
+  Wallet,
 } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/Avatar';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
 import { Progress } from '../components/ui/Progress';
-import Charts from './crypto-charts/charts';
 import TabBar from '../components/ui/TabBar';
-import WalletCard from './Wallet';
 import Transactions from './Transactions';
+import WalletCard from './Wallet';
 
 export default function Home() {
-  const [isConvertVisible, setIsConvertVisible] = useState(false);
-
-  const handleLogout = () => {
-    // Handle the logout logic here (e.g., clearing tokens, resetting states)
-    navigate('/login'); // Redirect to login page after logging out
-  };
-
   const navigate = useNavigate();
-  const [cryptoData, setCryptoData] = useState([
-    { name: 'Bitcoin', symbol: 'BTC', price: 45000, change: 2.5 },
-    { name: 'Ethereum', symbol: 'ETH', price: 3200, change: -1.2 },
-    { name: 'Cardano', symbol: 'ADA', price: 1.5, change: 5.7 },
-  ]);
+  const username = localStorage.getItem('username');
 
   const handleSendMoney = () => {
     navigate('/convert');
@@ -54,14 +37,13 @@ export default function Home() {
           <header className="flex justify-between items-center mb-8">
             <div className="flex items-center space-x-3">
               <Avatar className="w-12 h-12 border-2 border-purple-500">
-                <AvatarImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?fit=crop&w=300&h=300&q=80" />
-                <AvatarFallback>JD</AvatarFallback>
+                <AvatarFallback>{username[0]}</AvatarFallback>
               </Avatar>
               <div>
                 <h2 className="font-semibold text-white text-lg">
                   Welcome back
                 </h2>
-                <p className="text-sm text-gray-400">John Doe</p>
+                <p className="text-sm text-gray-400">{username}</p>
               </div>
             </div>
             <div className="flex space-x-2">

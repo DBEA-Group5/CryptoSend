@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 import { Card, CardContent } from '../components/ui/Card';
@@ -13,7 +13,6 @@ import {
 } from '../components/ui/Select'; // Assuming these are custom components
 
 export default function WalletCard() {
-  const navigate = useNavigate();
   const [walletBalances, setWalletBalances] = useState([]);
   const [selectedCurrency, setSelectedCurrency] = useState('');
   const [selectedBalance, setSelectedBalance] = useState('');
