@@ -43,7 +43,7 @@ export default function Convert() {
   const [walletBalance, setWalletBalance] = useState(0);
   const [errorMessage, setErrorMessage] = useState(''); // Error message state
 
-  const senderId = 15; // Assuming sender ID is known and fixed here
+  const senderId = USERID;
 
   const fetchCurrencyConversion = async (currency, setCurrencyValue) => {
     try {
@@ -216,7 +216,7 @@ export default function Convert() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0d1117] w-[400px]">
+    <div className="flex flex-col min-h-screen bg-[#0d1117] w-[440px]">
       <header className="flex items-center justify-between p-4 border-b border-gray-800">
         <Button
           variant="ghost"

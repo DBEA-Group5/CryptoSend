@@ -97,7 +97,7 @@ const Login = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gradient-to-r from-blue-950 to-purple-950 w-[400px]">
+    <div className="flex justify-center items-center h-screen bg-gradient-to-r from-blue-950 to-purple-950 w-[440px]">
       <h1 className="absolute top-32 justify-center items-center text-xl text-white font-bold">
         PAYGPal
       </h1>

@@ -10,7 +10,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen w-[400px] bg-gray-100">
+    <div className="flex flex-col items-center justify-center min-h-screen w-[440px] bg-gray-100">
       <h2 className="text-4xl font-semibold mb-4">Settings</h2>
 
       <button

@@ -19,36 +19,38 @@ export default function AddMoney() {
   const [inputValue, setInputValue] = useState('');
   const [inputCurrency, setInputCurrency] = useState('SGD');
   const [loading, setLoading] = useState(false);
+  const USERID = localStorage.getItem('user_id');
 
   const topUpWallet = async (customerId, amount, currency) => {
     if (!amount) return;
 
     console.log(customerId, amount, currency);
 
-  try {
-    setLoading(true);
-    const response = await axios.post(
-      `https://personal-cq8qhlkg.outsystemscloud.com/WalletAPI/rest/WalletService/addFunds`,
-      null, // No body content needed, as we're sending parameters in the URL
-      {
-        params: {
-          CustomerID: customerId,
-          AmountToAdd: amount,
-          Currency: currency,
-        },
-      }
-    );
-    console.log('Top up successful:', response.data);
-    // Handle response, e.g., navigate to success page or show success message
-  } catch (error) {
-    console.error(
-      'Error fetching transaction fee:',
-      error.response?.data || error.message
-    );
-    // Handle error (e.g., show error message to user)
-  } finally {
-    setLoading(false);
-  }
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `https://personal-cq8qhlkg.outsystemscloud.com/CreditTransferAPI/rest/CreditTransferService/topUpFunds`,
+        null, // No body content needed, as we're sending parameters in the URL
+        {
+          params: {
+            CustomerID: customerId,
+            InputAmount: amount,
+            Currency: currency,
+          },
+        }
+      );
+      console.log('Top up successful:', response.data);
+      alert(`Top up of ${amount} ${currency} successful`);
+      // Handle response, e.g., navigate to success page or show success message
+    } catch (error) {
+      console.error(
+        'Error fetching transaction fee:',
+        error.response?.data || error.message
+      );
+      // Handle error (e.g., show error message to user)
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -56,11 +58,11 @@ export default function AddMoney() {
   };
 
   const handleTopUp = () => {
-    topUpWallet(13, parseFloat(inputValue), inputCurrency);
+    topUpWallet(USERID, parseFloat(inputValue), inputCurrency);
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0d1117]">
+    <div className="flex flex-col min-h-screen bg-[#0d1117] w-[440px]">
       <header className="flex items-center justify-between p-4 border-b border-gray-800">
         <Button
           variant="ghost"
@@ -77,7 +79,7 @@ export default function AddMoney() {
         <Card className="bg-[#1e2329] border-gray-800">
           <CardContent className="p-4">
             <h2 className="text-lg font-semibold text-white mb-2">
-              Add Money From tBank
+              Add Money From DBS Multi-currency account
             </h2>
             {/* <div className="space-y-1 text-gray-400">
               <p>
@@ -134,7 +136,7 @@ export default function AddMoney() {
               <span className="animate-pulse mr-2">•••</span>
             </span>
           ) : (
-            'Send Money'
+            'Top Up'
           )}
         </Button>
       </footer>

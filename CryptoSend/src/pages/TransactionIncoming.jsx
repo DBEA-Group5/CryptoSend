@@ -13,7 +13,7 @@ const countryOptions = [
   { code: 'JP', label: 'JPY', flag: '🇯🇵' },
 ];
 
-export default function Transactions() {
+export default function TransactionsIncoming() {
   const [transactionsData, setTransactionsData] = useState([]);
   const [selectedCurrency, setSelectedCurrency] = useState('USD');
   const [isLoading, setIsLoading] = useState(false); // New loading state
@@ -26,7 +26,7 @@ export default function Transactions() {
     try {
       // Make an Axios GET request to fetch transactions
       const response = await axios.get(
-        'https://personal-zxuh1lct.outsystemscloud.com/TransactionService/rest/TransactionHistory/GetOutgoingPaymentByCurrency',
+        'https://personal-zxuh1lct.outsystemscloud.com/TransactionService/rest/TransactionHistory/GetIncomingPaymentByCurrency',
         {
           params: {
             Currency: currency,
@@ -54,7 +54,7 @@ export default function Transactions() {
               const userDetailResponse = await axios.get(
                 `https://personal-qjduceog.outsystemscloud.com/FA/rest/users_by_api_key/get_user_detail`,
                 {
-                  params: { user_Id: transaction.ReceivingCustomerID },
+                  params: { user_Id: transaction.SendingCustomerID },
                 }
               );
 
@@ -106,7 +106,7 @@ export default function Transactions() {
   return (
     <section className="mb-8">
       <h3 className="text-xl text-white font-bold mb-4">
-        Outgoing Transactions
+        Incoming Transactions
       </h3>
 
       {/* Currency dropdown */}
@@ -151,28 +151,28 @@ export default function Transactions() {
               >
                 <div>
                   <p className="font-semibold">
-                    From: {transaction.SendingCurrency} → To:{' '}
+                    From: {transaction.SendingCurrency} → Receives:{' '}
                     {transaction.ReceivingCurrency}
                   </p>
                   <p className="text-sm text-gray-400">
                     Date: {new Date(transaction.Timestamp).toLocaleDateString()}
                   </p>
                   <p className="text-sm text-gray-400">
-                    Recipient: {transaction.receivingUsername || 'Unknown'}
+                    Sender: {transaction.receivingUsername || 'Unknown'}
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="font-semibold">
                     {parseFloat(transaction.SendingAmount).toLocaleString()}{' '}
-                    {transaction.SendingCurrency}
+                    {transaction.ReceivingCurrency}
                   </p>{' '}
                   <p className="text-xs">
                     {parseFloat(transaction.ReceivingAmount).toLocaleString()}{' '}
-                    {transaction.ReceivingCurrency}
+                    {transaction.SendingCurrency}
                   </p>
-                  <p className="text-sm text-red-400 flex items-center justify-end">
+                  <p className="text-sm text-green-700 flex items-center justify-end">
                     <ArrowUpRight className="w-3 h-3 mr-1" />
-                    Outgoing
+                    Incoming
                   </p>
                 </div>
               </div>

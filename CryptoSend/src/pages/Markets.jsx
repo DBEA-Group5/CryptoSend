@@ -8,7 +8,7 @@ export default function Markets() {
   const username = localStorage.getItem('username');
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-900 mx-auto w-[400px]">
+    <div className="flex flex-col min-h-screen bg-gray-900 mx-auto w-[440px]">
       <div className="flex-1 overflow-y-auto pb-20">
         <div className="px-4 py-6">
           <header className="flex justify-between items-center mb-8">
