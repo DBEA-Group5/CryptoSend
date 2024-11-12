@@ -46,22 +46,7 @@ export default function Home() {
                 <p className="text-sm text-gray-400">{username}</p>
               </div>
             </div>
-            <div className="flex space-x-2">
-              <Button
-                size="lg"
-                variant="ghost"
-                className="text-gray-400 hover:text-purple-500 hover:bg-purple-500/10 p-2"
-              >
-                <Bell className="w-8 h-8" />
-              </Button>
-              <Button
-                size="lg"
-                variant="ghost"
-                className="text-gray-400 hover:text-purple-500 hover:bg-purple-500/10 p-2"
-              >
-                <Search className="w-8 h-8" />
-              </Button>
-            </div>
+            <div className="flex space-x-2"></div>
           </header>
 
           {/* CryptoSend Logo */}
