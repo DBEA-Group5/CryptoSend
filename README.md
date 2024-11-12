@@ -1,14 +1,18 @@
 # PAYGPal
 
-This is a front-end application that displays transaction history with multiple currency options. The app uses React, Axios, and some components from Ant Design and Lucide Icons.
+This is a full stack application that utilises USDC to perform cross-border payments and transfers.
 
 ## Features
 
-- Displays outgoing transactions with currency conversion.
-- Fetches transaction data based on selected currency.
-- Provides additional user details on transactions.
+- Displays transactions with currency conversion.
+- Send Money through USDC conversion over blockchain network, takes into account Solana's transaction fees.
+- Fetches historical transaction data based on selected currency, through Coingecko API.
+- Login using twillio
+-
 
 ## Getting Started
+
+- npm run dev
 
 ### Prerequisites
 
