@@ -105,63 +105,6 @@ export default function Home() {
           {/* Crypto Portfolio */}
           <Transactions></Transactions>
 
-          {/* Investment Goal */}
-          <section className="mb-8">
-            <h3 className="text-xl text-white font-bold mb-4">
-              Investment Goal
-            </h3>
-            <Card className="bg-gray-800 text-white overflow-hidden">
-              <CardContent className="p-4">
-                <div className="flex justify-between items-center mb-2">
-                  <p className="font-semibold">Monthly Goal</p>
-                  <p className="text-sm text-gray-400">$800 / $1000</p>
-                </div>
-                <Progress
-                  value={80}
-                  className="h-2 mb-2 bg-purple-900 [&::-webkit-progress-value]:bg-purple-400"
-                />
-                <p className="text-sm text-gray-400">
-                  You're 80% of the way there!
-                </p>
-              </CardContent>
-            </Card>
-          </section>
-
-          {/* My apps section */}
-          <section className="mb-8">
-            <h3 className="text-xl text-white font-bold mb-4">My Apps</h3>
-            <div className="grid grid-cols-3 gap-4">
-              {[
-                {
-                  icon: CreditCard,
-                  label: 'Wallet',
-                  color: 'from-purple-500 to-indigo-500',
-                },
-                {
-                  icon: PieChart,
-                  label: 'Analytics',
-                  color: 'from-pink-500 to-rose-500',
-                },
-                {
-                  icon: Building2,
-                  label: 'Retail',
-                  color: 'from-orange-500 to-amber-500',
-                },
-              ].map(({ icon: Icon, label, color }) => (
-                <Card
-                  key={label}
-                  className={`bg-gradient-to-br ${color} hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1`}
-                >
-                  <CardContent className="p-4 flex flex-col items-center justify-center">
-                    <Icon className="w-8 h-8 text-white mb-2" />
-                    <span className="text-sm font-medium text-white">
-                      {label}
-                    </span>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </section>
           {/* Bottom Navigation Bar */}
           <TabBar />
         </div>

@@ -11,7 +11,6 @@ export default function TabBar() {
   const tabs = [
     { icon: HomeIcon, label: 'Home', path: '/home' },
     { icon: BarChart2, label: 'Markets', path: '/markets' },
-    { icon: Wallet, label: 'Wallet', path: '/wallet' },
     { icon: Settings, label: 'Settings', path: '/settings' },
   ];
 

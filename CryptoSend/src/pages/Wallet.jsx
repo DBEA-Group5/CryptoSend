@@ -16,6 +16,7 @@ export default function WalletCard() {
   const [walletBalances, setWalletBalances] = useState([]);
   const [selectedCurrency, setSelectedCurrency] = useState('');
   const [selectedBalance, setSelectedBalance] = useState('');
+  const USERID = localStorage.getItem('user_id');
 
   // Define gradients for each currency
   const gradientStyles = {
@@ -28,13 +29,13 @@ export default function WalletCard() {
   };
 
   // Fetch wallet balances from API
-  const fetchWalletBalances = async (userId) => {
+  const fetchWalletBalances = async (userid) => {
     try {
       const response = await axios.get(
         `https://personal-cq8qhlkg.outsystemscloud.com/WalletAPI/rest/WalletService/getAllWalletBalance`,
         {
           params: {
-            CustomerID: userId,
+            CustomerID: userid,
           },
         }
       );
@@ -51,7 +52,7 @@ export default function WalletCard() {
   };
 
   useEffect(() => {
-    fetchWalletBalances(13); // Replace 13 with actual user ID if needed
+    fetchWalletBalances(USERID); // Replace 13 with actual user ID if needed
   }, []);
 
   // Update displayed balance and gradient when currency is selected
@@ -96,16 +97,13 @@ export default function WalletCard() {
         </p>
 
         <div className="flex justify-between text-sm">
-          <span className="bg-white/20 px-2 py-1 rounded-full">
-            +2.5% from last month
-          </span>
-          <Link
+          {/* <Link
             to="/balance-details"
             className="text-white hover:underline flex items-center"
           >
             View Details
             <ChevronRight className="w-4 h-4 ml-1" />
-          </Link>
+          </Link> */}
         </div>
       </CardContent>
     </Card>

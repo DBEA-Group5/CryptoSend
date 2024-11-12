@@ -11,7 +11,7 @@ export default function Transactions() {
   console.log('Logged in user ID:', userId);
 
   // Fetch wallet balances from API
-  const fetchTransactionHistory = async (currency, startDate, endDate) => {
+  const fetchTransactionHistory = async (currency) => {
     try {
       // Make an Axios GET request
       const response = await axios.get(
@@ -19,8 +19,6 @@ export default function Transactions() {
         {
           params: {
             Currency: currency,
-            StartDate: startDate,
-            EndDate: endDate,
             user_id: userId,
           },
           headers: {
@@ -42,7 +40,7 @@ export default function Transactions() {
   };
 
   useEffect(() => {
-    fetchTransactionHistory('SGD', '2022-01-01', '2026-01-01')
+    fetchTransactionHistory('SGD')
       .then((data) => {
         console.log('Fetched transactions:', data);
         // Do something with the data, e.g., set it to state or display it

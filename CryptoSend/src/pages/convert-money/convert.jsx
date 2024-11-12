@@ -39,6 +39,11 @@ export default function Convert() {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]); // State for users
   const [selectedRecipient, setSelectedRecipient] = useState(''); // State for selected recipient
+  const USERID = localStorage.getItem('user_id');
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [errorMessage, setErrorMessage] = useState(''); // Error message state
+
+  const senderId = 15; // Assuming sender ID is known and fixed here
 
   const fetchCurrencyConversion = async (currency, setCurrencyValue) => {
     try {
@@ -58,20 +63,19 @@ export default function Convert() {
     }
   };
 
-  // Fetch users from the API
   const fetchUsers = async () => {
     try {
       const response = await axios.get(
         `https://personal-qjduceog.outsystemscloud.com/FA/rest/users_by_api_key/get_all_user_Id_and_name`
       );
-      setUsers(response.data); // Store users in state
+      setUsers(response.data);
     } catch (error) {
       console.error('Error fetching users:', error);
     }
   };
 
   useEffect(() => {
-    fetchUsers(); // Fetch users when component mounts
+    fetchUsers();
   }, []);
 
   useEffect(() => {
@@ -87,7 +91,7 @@ export default function Convert() {
   useEffect(() => {
     if (inputValue) {
       setOutputValue(
-        (inputValue * convertedCurrency * convertedCurrency2).toFixed(2)
+        ((inputValue * convertedCurrency) / convertedCurrency2).toFixed(2)
       );
     }
   }, [inputValue, convertedCurrency, convertedCurrency2]);
@@ -118,7 +122,6 @@ export default function Convert() {
   }, [inputCurrency, inputValue]);
 
   useEffect(() => {
-    // Calculate final amount only when both `inputValue` and `transactionFee` are available
     if (inputValue && transactionFee !== null) {
       setFinalConvertAmount(Number(inputValue) + Number(transactionFee));
     }
@@ -129,20 +132,91 @@ export default function Convert() {
     setInputValue(input);
     setLoading(true);
 
+    // Check if input value exceeds wallet balance
+    if (Number(input) > walletBalance) {
+      setErrorMessage(
+        `Insufficient balance. Your wallet balance is ${walletBalance} ${inputCurrency}.`
+      );
+    } else {
+      setErrorMessage('');
+    }
+
     setTimeout(() => {
       setOutputValue(
-        (input * convertedCurrency * convertedCurrency2).toFixed(2)
+        ((input * convertedCurrency) / convertedCurrency2).toFixed(2)
       );
       setLoading(false);
     }, 1000);
   };
 
-  const sendMoney = () => {
-    console.log(finalConvertAmount);
+  // Fetch wallet balances from API
+  const fetchWalletBalances = async (userid, inputCurrency) => {
+    try {
+      const response = await axios.get(
+        `https://personal-cq8qhlkg.outsystemscloud.com/WalletAPI/rest/WalletService/getAllWalletBalance`,
+        {
+          params: {
+            CustomerID: userid,
+          },
+        }
+      );
+
+      // Find the wallet balance that matches the input currency
+      const matchingWallet = response.data.find(
+        (wallet) => wallet.Currency === inputCurrency
+      );
+
+      if (matchingWallet) {
+        // Set wallet balance if there's a match
+        setWalletBalance(matchingWallet.Balance);
+      } else {
+        console.log(`No wallet found for currency: ${inputCurrency}`);
+      }
+    } catch (error) {
+      console.error('Error fetching wallet balances:', error);
+    }
+  };
+
+  // Replace with actual user ID and input currency
+  useEffect(() => {
+    fetchWalletBalances(USERID, inputCurrency); // Replace 'USD' with your desired input currency
+  }, [inputCurrency]);
+
+  const sendMoney = async () => {
+    if (Number(inputValue) > walletBalance) {
+      setErrorMessage(
+        `Insufficient balance. Your wallet balance is ${walletBalance} ${inputCurrency}.`
+      );
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `https://personal-cq8qhlkg.outsystemscloud.com/CreditTransferAPI/rest/CreditTransferService/TransferFunds`,
+        null, // No data in the body since we're using query params
+        {
+          params: {
+            SendingCustomerID: senderId,
+            ReceivingCustomerID: selectedRecipient,
+            SendingCurrency: inputCurrency,
+            ReceivingCurrency: outputCurrency,
+            SendingAmount: finalConvertAmount,
+            ReceivingAmount: outputValue,
+          },
+        }
+      );
+      console.log('Transfer successful:', response.data);
+      alert('Money sent successfully!');
+    } catch (error) {
+      console.error('Error sending money:', error);
+      alert('Error sending money');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0d1117]">
+    <div className="flex flex-col min-h-screen bg-[#0d1117] w-[400px]">
       <header className="flex items-center justify-between p-4 border-b border-gray-800">
         <Button
           variant="ghost"
@@ -207,8 +281,11 @@ export default function Convert() {
                     className="flex-1 bg-[#282d34] border-gray-700 text-white placeholder-gray-500 focus:border-purple-500"
                   />
                 </div>
+                {errorMessage && (
+                  <div className="text-red-500 text-sm">{errorMessage}</div>
+                )}
                 <p className="text-sm text-gray-400">
-                  Available balance: 1,000.00 {inputCurrency}
+                  Available balance: {walletBalance} {inputCurrency}
                 </p>
               </CardContent>
             </Card>
@@ -295,7 +372,7 @@ export default function Convert() {
           )}
           <Button
             className="w-full h-14 bg-[#8A2BE2] hover:bg-[#7B27CC] text-white font-medium text-lg"
-            disabled={loading}
+            disabled={Number(inputValue) > walletBalance || loading}
             onClick={sendMoney}
           >
             {loading ? (

@@ -9,15 +9,8 @@ const Login = ({ onLoginSuccess }) => {
   const [otp, setOtp] = useState(''); // State to store the OTP input by the user
   const [otpError, setOtpError] = useState(''); // State to store OTP error message
   const [showOtpModal, setShowOtpModal] = useState(false); // State to control OTP modal visibility
-  const [serverOtp, setServerOtp] = useState(''); // State to store OTP from the server
+  const [userId, setUserId] = useState(null); // State to store the user_id
   const navigate = useNavigate();
-
-  //   useEffect(() => {
-  //     // Simulate a successful login by setting a value in localStorage
-  //     onLoginSuccess();
-  //     localStorage.setItem('isLoggedIn', 'true');
-  //     navigate('/home');
-  //   }, [navigate, onLoginSuccess]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -35,11 +28,12 @@ const Login = ({ onLoginSuccess }) => {
       );
 
       if (response.status === 200) {
-        // Store user_id in localStorage
-        localStorage.setItem('user_id', response.data.user_id);
-        setServerOtp('1234');
+        // Store user_id and other necessary data
+        const userId = response.data.user_id;
+        localStorage.setItem('user_id', userId);
+        setUserId(userId);
         setShowOtpModal(true);
-        getUserDetails(response.data.user_id);
+        getUserDetails(userId);
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -50,39 +44,55 @@ const Login = ({ onLoginSuccess }) => {
     }
   };
 
-  const getUserDetails = async (user_id) => {
+  const getUserDetails = async (userId) => {
     try {
       const response = await axios.get(
-        `https://personal-qjduceog.outsystemscloud.com/FA/rest/users_by_api_key/get_user_detail?`,
+        `https://personal-qjduceog.outsystemscloud.com/FA/rest/users_by_api_key/get_user_detail`,
         {
           params: {
-            user_Id: user_id,
+            user_Id: userId,
           },
         }
       );
 
       if (response.status === 200) {
-        // Store user_id in localStorage
+        // Store user details
         localStorage.setItem('username', response.data.Username);
       }
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        setError('cannot get username');
-      } else {
-        setError('An error occurred. Please try again later.');
-      }
+      setError('An error occurred. Please try again later.');
     }
   };
 
-  const handleOtpSubmit = (e) => {
+  const handleOtpSubmit = async (e) => {
     e.preventDefault();
 
-    if (otp === serverOtp) {
-      onLoginSuccess();
-      localStorage.setItem('isLoggedIn', 'true');
-      navigate('/home');
-    } else {
-      setOtpError('Incorrect OTP, please try again.');
+    if (!otp || !userId) {
+      setOtpError('Please enter a valid OTP');
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `https://personal-qjduceog.outsystemscloud.com/FA/rest/users_by_api_key/confirm_otp`,
+        null,
+        {
+          params: {
+            user_id: userId,
+            otp_code: otp,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        onLoginSuccess();
+        localStorage.setItem('isLoggedIn', 'true');
+        navigate('/home');
+      } else {
+        setOtpError('Incorrect OTP, please try again.');
+      }
+    } catch (error) {
+      setOtpError('An error occurred while verifying OTP.');
     }
   };
 

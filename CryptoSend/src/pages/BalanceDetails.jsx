@@ -77,7 +77,6 @@ export default function BalanceDetails() {
           <p className="text-4xl font-bold mb-4">$12,345.67</p>
           <div className="flex items-center text-sm bg-white/20 px-2 py-1 rounded-full w-fit">
             <TrendingUp className="w-4 h-4 mr-1" />
-            <span>+2.5% from last month</span>
           </div>
         </CardContent>
       </Card>
